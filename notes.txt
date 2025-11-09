@@ -1,0 +1,13 @@
+FSO fazer testes
+
+
+
+
+segunda classe so com modificadores
+
+devolver iteradores (prints na main)
+
+sinais (list users)
+
+sorted students
+normal students
