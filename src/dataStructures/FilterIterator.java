@@ -10,7 +10,7 @@ import dataStructures.exceptions.NoSuchElementException;
  * @param <E> Generic Element
  *
  */
-class FilterIterator<E> implements Iterator<E> {
+public class FilterIterator<E> implements Iterator<E> {
 
     /**
      *  Iterator of elements to filter.
