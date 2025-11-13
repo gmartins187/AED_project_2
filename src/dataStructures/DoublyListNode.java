@@ -39,7 +39,9 @@ class DoublyListNode<E> implements Serializable {
         public DoublyListNode(E theElement, DoublyListNode<E> thePrevious,
                               DoublyListNode<E> theNext ) {
             //TODO: Left as an exercise.
-
+            this.element = theElement;
+            this.next = theNext;
+            this.previous = thePrevious;
         }
 
         /**
@@ -48,7 +50,7 @@ class DoublyListNode<E> implements Serializable {
          */
         public DoublyListNode(E theElement ) {
             //TODO: Left as an exercise.
-
+            this.element = theElement;
         }
 
         /**
@@ -81,7 +83,7 @@ class DoublyListNode<E> implements Serializable {
          */
         public void setElement( E newElement ) {
             //TODO: Left as an exercise.
-
+            this.element = newElement;
         }
 
         /**
@@ -90,7 +92,7 @@ class DoublyListNode<E> implements Serializable {
          */
         public void setPrevious( DoublyListNode<E> newPrevious ) {
             //TODO: Left as an exercise.
-
+            this.previous = newPrevious;
         }
 
         /**
@@ -99,6 +101,6 @@ class DoublyListNode<E> implements Serializable {
          */
         public void setNext( DoublyListNode<E> newNext ) {
             //TODO: Left as an exercise.
-
+            this.next = newNext;
         }
     }
