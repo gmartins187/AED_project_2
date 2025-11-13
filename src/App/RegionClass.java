@@ -22,7 +22,7 @@ public class RegionClass implements Region {
     private final List<Service> services;
 
     private final SortedMap<String, Student> sortedAlphabeticalStudents;
-    private final SortedMap<Integer, Service> sortedRatingServices;
+    private final SortedList<Service> sortedRatingServices;
 
     private int numOfEthnicities;
     private final List<String> ethnicityList;
@@ -50,7 +50,7 @@ public class RegionClass implements Region {
         this.students = new DoublyLinkedList<>();
         this.services = new DoublyLinkedList<>();
 
-        this.sortedAlphabeticalStudents = new SortedDoublyLinkedList<>(new StudentsComparator());
+        this.sortedAlphabeticalStudents = new BSTSortedMap<>();
         this.sortedRatingServices = new SortedDoublyLinkedList<>(new ServicesComparator());
     }
 
@@ -100,8 +100,10 @@ public class RegionClass implements Region {
 
     @Override
     public void addStudent(Student student) {
+        String stuName = student.getName();
         students.addLast(student);
-        if(!sortedAlphabeticalStudents.contains(student)) sortedAlphabeticalStudents.add(student);
+        if(sortedAlphabeticalStudents.get(stuName) == null)
+            sortedAlphabeticalStudents.put(stuName, student);
     }
 
     @Override
@@ -132,7 +134,7 @@ public class RegionClass implements Region {
         Student student = getStudent(name);
         String ethnicity = getStudent(name).getEthnicity();
         getService(student.getHome().getName()).removeStudent(student);
-        sortedAlphabeticalStudents.remove(student);
+        sortedAlphabeticalStudents.remove(name);
         students.remove(students.indexOf(student));
         if(!containsEthnicity(ethnicity))
             ethnicityList.remove(ethnicityList.indexOf(ethnicity.toLowerCase()));
@@ -173,7 +175,7 @@ public class RegionClass implements Region {
     @Override
     public Iterator<Student> listStudents(String from) {
         if(from.equalsIgnoreCase("all"))
-            return sortedAlphabeticalStudents.iterator();
+            return sortedAlphabeticalStudents.values();
         else
             return new FilterIterator<>(students.iterator(), new IsFrom(from));
     }
