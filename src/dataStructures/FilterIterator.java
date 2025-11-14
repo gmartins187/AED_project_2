@@ -35,6 +35,9 @@ public class FilterIterator<E> implements Iterator<E> {
      */
     public FilterIterator(Iterator<E> list, Predicate<E> criterion) {
         //TODO: Left as an exercise.
+        this.iterator = list;
+        this.criterion = criterion;
+        this.nextToReturn = findNext();
     }
 
     /**
@@ -44,7 +47,7 @@ public class FilterIterator<E> implements Iterator<E> {
      */
     public boolean hasNext() {
         //TODO: Left as an exercise.
-        return true;
+        return nextToReturn != null;
     }
 
     /**
@@ -55,7 +58,12 @@ public class FilterIterator<E> implements Iterator<E> {
      */
     public E next() {
         //TODO: Left as an exercise.
-        return null;
+        if(nextToReturn == null)
+            throw new NoSuchElementException();
+
+        E current = nextToReturn;
+        nextToReturn = findNext();  // find the next element that matches
+        return current;
     }
 
     /**
@@ -64,6 +72,22 @@ public class FilterIterator<E> implements Iterator<E> {
      */
     public void rewind() {
         //TODO: Left as an exercise.
+        iterator.rewind();
+        nextToReturn = findNext();
     }
 
+
+    //added private methods
+
+    /**
+     * @return the next to return by the filter
+     */
+    private E findNext() {
+        while (iterator.hasNext()) {
+            E candidate = iterator.next();
+            if (criterion.check(candidate))
+                return candidate;
+        }
+        return null; // no more matching elements
+    }
 }
