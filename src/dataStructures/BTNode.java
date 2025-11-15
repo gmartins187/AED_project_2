@@ -44,6 +44,10 @@ class BTNode<E> implements Node<E> {
      */
     BTNode(E elem, BTNode<E> parent, BTNode<E> leftChild, BTNode<E> rightChild){
         //TODO: Left as an exercise.
+        this.parent = parent;
+        this.leftChild = leftChild;
+        this.rightChild = rightChild;
+        this.element = elem;
     }
 
     /**
@@ -128,7 +132,16 @@ class BTNode<E> implements Node<E> {
 
     public int getHeight() {
         //TODO: Left as an exercise.
-        return 0;
+        int leftHeight = 0;
+        int rightHeight = 0;
+
+        if (this.leftChild != null)
+            leftHeight = ((BTNode<E>) leftChild).getHeight() + 1;
+
+        if (this.rightChild != null)
+            rightHeight = ((BTNode<E>) rightChild).getHeight() + 1;
+
+        return Math.max(leftHeight, rightHeight);
     }
 
     /**
@@ -137,7 +150,11 @@ class BTNode<E> implements Node<E> {
      */
     BTNode<E> furtherLeftElement() {
         //TODO: Left as an exercise.
-	return null;
+        BTNode<E> current = this;
+        while (current.getLeftChild() != null) {
+            current = (BTNode<E>) current.getLeftChild();
+        }
+        return current;
     }
 
    /**
@@ -146,7 +163,12 @@ class BTNode<E> implements Node<E> {
      */
     BTNode<E> furtherRightElement() {
          //TODO: Left as an exercise.
-	return null;
+        BTNode<E> currentRightChild = this;
+        while(currentRightChild.getRightChild() != null){
+            currentRightChild = (BTNode<E>) currentRightChild.getRightChild();
+        }
+
+        return currentRightChild;
     }
 
    //new methods: Left as an exercise.

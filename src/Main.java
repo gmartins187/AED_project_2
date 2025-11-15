@@ -207,7 +207,9 @@ public class Main {
             int value1 = in.nextInt();
             int value2 = in.nextInt();
             name = in.nextLine().trim();
+
             app.newService(type, latitude, longitude, value1, value2, name);
+
             System.out.printf(NEW_SERVICE, type, app.getServiceName(name));
         } catch (InvalidService e){
             System.out.println(INVALID_TYPE);

@@ -65,7 +65,8 @@ public class ListInArray<E> implements List<E> {
      */
     public E getFirst() {
         //TODO: Left as an exercise.
-        return null;
+        if(isEmpty()) throw new NoSuchElementException();
+        return elems[0];
     }
 
     /**
@@ -76,7 +77,8 @@ public class ListInArray<E> implements List<E> {
      */
     public E getLast() {
         //TODO: Left as an exercise.
-        return null;
+        if(isEmpty()) throw new NoSuchElementException();
+        return elems[counter-1];
     }
 
     /**
@@ -91,7 +93,8 @@ public class ListInArray<E> implements List<E> {
      */
     public E get(int position) {
         //TODO: Left as an exercise.
-        return null;
+        if(position < 0 || position >= counter) throw new InvalidPositionException();
+        return elems[position];
     }
 
     /**
@@ -104,7 +107,10 @@ public class ListInArray<E> implements List<E> {
      */
     public int indexOf(E element) {
         //TODO: Left as an exercise.
-        return 0;
+        for (int i=0; i<counter; i++)
+            if(elems[i].equals(element)) return i;
+
+        return -1;
     }
 
     /**
@@ -114,6 +120,11 @@ public class ListInArray<E> implements List<E> {
      */
     public void addFirst(E element) {
         //TODO: Left as an exercise.
+        ensureCapacity();
+        for (int i = counter; i > 0; i--)
+            elems[i] = elems[i - 1];
+        elems[0] = element;
+        counter++;
     }
 
     /**
@@ -123,6 +134,8 @@ public class ListInArray<E> implements List<E> {
      */
     public void addLast(E element) {
         //TODO: Left as an exercise.
+        ensureCapacity();
+        elems[counter++] = element;
     }
 
     /**
@@ -137,6 +150,26 @@ public class ListInArray<E> implements List<E> {
      */
     public void add(int position, E element) {
         //TODO: Left as an exercise.
+        if (position < 0 || position > counter)
+            throw new InvalidPositionException();
+
+        if (position == 0) {
+            addFirst(element);
+            return;
+        }
+
+        if (position == counter) {
+            addLast(element);
+            return;
+        }
+
+        ensureCapacity();
+
+        for (int i = counter; i > position; i--)
+            elems[i] = elems[i - 1];
+
+        elems[position] = element;
+        counter++;
     }
 
     /**
@@ -147,7 +180,12 @@ public class ListInArray<E> implements List<E> {
      */
     public E removeFirst() {
         //TODO: Left as an exercise.
-        return null;
+        if (isEmpty()) throw new NoSuchElementException();
+        E ret = elems[0];
+        for (int i = 0; i < counter - 1; i++)
+            elems[i] = elems[i + 1];
+        elems[--counter] = null;
+        return ret;
     }
 
     /**
@@ -158,7 +196,10 @@ public class ListInArray<E> implements List<E> {
      */
     public E removeLast() {
         //TODO: Left as an exercise.
-        return null;
+        if (isEmpty()) throw new NoSuchElementException();
+        E ret = elems[--counter];
+        elems[counter] = null;
+        return ret;
     }
 
     /**
@@ -173,6 +214,28 @@ public class ListInArray<E> implements List<E> {
      */
     public E remove(int position) {
         //TODO: Left as an exercise.
-        return null;
+        if (position < 0 || position >= counter)
+            throw new InvalidPositionException();
+
+        E ret = elems[position];
+
+        for (int i = position; i < counter - 1; i++)
+            elems[i] = elems[i + 1];
+
+        elems[--counter] = null;
+        return ret;
+    }
+
+    //added private methods
+    /**
+     * Ensures there is enough capacity to add a new element.
+     */
+    @SuppressWarnings("unchecked")
+    private void ensureCapacity() {
+        if (counter == elems.length) {
+            E[] newElems = (E[]) new Object[elems.length * FACTOR];
+            System.arraycopy(elems, 0, newElems, 0, counter);
+            elems = newElems;
+        }
     }
 }

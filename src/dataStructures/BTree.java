@@ -22,6 +22,12 @@ abstract class BTree<E> extends Tree<E> {
      */
     BTNode<E> furtherLeftElement() {
         //TODO: Left as an exercise.
+        if(root == null) return null;
+
+        BTNode<E> current = (BTNode<E>) this.root;
+        while(current.getLeftChild() != null){
+            current = (BTNode<E>) current.getLeftChild();
+        }
         return null;
     }
 
@@ -31,6 +37,12 @@ abstract class BTree<E> extends Tree<E> {
      */
     BTNode<E> furtherRightElement() {
         //TODO: Left as an exercise.
+        if(root == null) return null;
+
+        BTNode<E> current = (BTNode<E>) this.root;
+        while(current.getRightChild() != null){
+            current = (BTNode<E>) current.getRightChild();
+        }
         return null;
     }
 

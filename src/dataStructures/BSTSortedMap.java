@@ -61,8 +61,18 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
 
     private BTNode<Entry<K,V>> getNode(BTNode<Entry<K,V>> node, K key) {
         //TODO: Left as an exercise.
-        
-        return null;
+
+        if(node == null)
+            return null;
+
+        int cmp = key.compareTo(node.getElement().key());
+
+        if(cmp ==0)
+            return node;
+        else if(cmp < 0)
+            return getNode((BTNode<Entry<K,V>>) node.getLeftChild(), key);
+        else
+            return getNode((BTNode<Entry<K,V>>) node.getRightChild(), key);
     }
 
     /**
@@ -78,8 +88,45 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
     @Override
     public V put(K key, V value) {
         //TODO: Left as an exercise.
-       
-        return null;
+
+        if (root == null) {
+            root = new BTNode<>(new Map.Entry<>(key, value));
+            currentSize++;
+            return null;
+        }
+
+        BTNode<Entry<K,V>> currrent = (BTNode<Entry<K,V>>) root;
+
+        while (true) {
+
+            int cmp = key.compareTo(currrent.getElement().key());
+
+            if (cmp == 0) {
+                V oldValue = currrent.getElement().value();
+                currrent.setElement(new Entry<>(key, value));
+                return oldValue;
+            }
+
+            else if (cmp < 0) {
+                if (currrent.getLeftChild() == null) {
+                    BTNode<Entry<K,V>> newNode = new BTNode<>(new Map.Entry<>(key, value), currrent);
+                    currrent.setLeftChild(newNode);
+                    currentSize++;
+                    return null;
+                }
+                currrent = (BTNode<Entry<K,V>>) currrent.getLeftChild();
+            }
+
+            else {
+                if (currrent.getRightChild() == null) {
+                    BTNode<Entry<K,V>> newNode = new BTNode<>(new Map.Entry<>(key, value), currrent);
+                    currrent.setRightChild(newNode);
+                    currentSize++;
+                    return null;
+                }
+                currrent = (BTNode<Entry<K,V>>) currrent.getRightChild();
+            }
+        }
     }
 
 
@@ -95,8 +142,112 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
     @Override
     public V remove(K key) {
         //TODO: Left as an exercise.
-       
-        return null;
+
+        BTNode<Entry<K,V>> node = getNode((BTNode<Entry<K,V>>) root, key);
+
+        if (node == null)
+            return null;
+
+        V oldValue = node.getElement().value();
+
+        if (isLeaf(node))  removeLeaf(node);
+        else if (hasSingleChild(node))  removeSingleChild(node);
+        else  removeTwoChildren(node);
+
+        currentSize--;
+        return oldValue;
+    }
+
+    //private added methods
+    /**
+     * Removes a leaf node (node with no children) from the BST.
+     * If the node is the root, sets root to null.
+     * Otherwise, removes the reference from the parent node.
+     *
+     * @param node the leaf node to remove
+     */
+    private void removeLeaf(BTNode<Entry<K,V>> node) {
+        BTNode<Entry<K,V>> parent = (BTNode<Entry<K,V>>) node.getParent();
+
+        if (parent == null) { // removing root
+            root = null;
+            return;
+        }
+
+        if (parent.getLeftChild() == node)
+            parent.setLeftChild(null);
+        else
+            parent.setRightChild(null);
+    }
+
+    /**
+     * Removes a node that has exactly one child from the BST.
+     * Connects the node's parent directly to the node's only child,
+     * effectively bypassing the node being removed.
+     * If the node is the root, the child becomes the new root.
+     *
+     * @param node the node with a single child to remove
+     */
+    private void removeSingleChild(BTNode<Entry<K,V>> node) {
+
+        BTNode<Entry<K,V>> child =
+                (node.getLeftChild() != null)
+                        ? (BTNode<Entry<K,V>>) node.getLeftChild()
+                        : (BTNode<Entry<K,V>>) node.getRightChild();
+
+        BTNode<Entry<K,V>> parent = (BTNode<Entry<K,V>>) node.getParent();
+
+        if (parent == null) {
+            root = child;
+            child.setParent(null);
+            return;
+        }
+
+        if (parent.getLeftChild() == node)
+            parent.setLeftChild(child);
+        else
+            parent.setRightChild(child);
+
+        child.setParent(parent);
+    }
+
+    /**
+     * Removes a node that has two children from the BST.
+     * Finds the in-order predecessor (the furthest right element in the left subtree),
+     * replaces the node's element with the predecessor's element,
+     * and then removes the predecessor node.
+     *
+     * @param node the node to remove
+     */
+    private void removeTwoChildren(BTNode<Entry<K,V>> node) {
+
+        BTNode<Entry<K,V>> pred =
+                ((BTNode<Entry<K,V>>) node.getLeftChild()).furtherRightElement();
+
+        node.setElement(pred.getElement());
+
+        if (isLeaf(pred))
+            removeLeaf(pred);
+        else
+            removeSingleChild(pred);
+    }
+
+    /**
+     *
+     * @param pred the one to check if it does not have any child
+     * @return true if it does have zero child
+     */
+    private boolean isLeaf(BTNode<Entry<K, V>> pred) {
+        return (pred.getRightChild() == null && pred.getLeftChild() == null);
+    }
+
+    /**
+     *
+     * @param node the node to check if it has only one child
+     * @return true if it only has one child
+     */
+    private boolean hasSingleChild(BTNode<Entry<K,V>> node) {
+        return (node.getLeftChild() == null) ||  (node.getRightChild() == null);
     }
 
     /**
