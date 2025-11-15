@@ -15,6 +15,8 @@ class MapSinglyList<K,V> implements Map<K, V> {
 
     public MapSinglyList() {
         //TODO: Left as exercise
+        size = 0;
+        head = null;
     }
 
     /**
@@ -25,7 +27,7 @@ class MapSinglyList<K,V> implements Map<K, V> {
   
     public boolean isEmpty() {
 	//TODO: Left as exercise
-        return false;
+        return size == 0;
     }
 
     /**
@@ -36,7 +38,7 @@ class MapSinglyList<K,V> implements Map<K, V> {
     @Override
     public int size() {
 	//TODO: Left as exercise
-        return 0;
+        return size;
     }
 
     /**
@@ -50,6 +52,14 @@ class MapSinglyList<K,V> implements Map<K, V> {
     @Override
     public V get(K key) {
         //TODO: Left as exercise
+        if(key == null) return null;
+        SinglyListNode<Entry<K,V>> current = head;
+
+        while(current != null){
+            if(current.getElement().key().equals(key))
+                return current.getElement().value();
+            else current = current.getNext();
+        }
         return null;
     }
     
@@ -67,6 +77,25 @@ class MapSinglyList<K,V> implements Map<K, V> {
     
     public V put(K key, V value) {
         //TODO: Left as an exercise.
+        SinglyListNode<Entry<K,V>> current = head;
+
+        while (current != null) {
+            if (current.getElement().key().equals(key)) {
+                V oldValue = current.getElement().value();
+                current.setElement(new Entry<>(key, value));
+                return oldValue;
+            }
+            current = current.getNext();
+        }
+
+        Entry<K,V> newEntry = new Entry<>(key, value);
+
+        SinglyListNode<Entry<K,V>> newNode = new SinglyListNode<>(newEntry, head);
+
+        head = newNode;
+
+        size++;
+
         return null;
     }
 
@@ -81,6 +110,44 @@ class MapSinglyList<K,V> implements Map<K, V> {
      */
     public V remove(K key) {
         //TODO: Left as an exercise.
+        if (isEmpty())
+            return null;
+
+        boolean headKeysAreEqual;
+        K headKey = head.getElement().key();
+
+        if (headKey == null)
+            headKeysAreEqual = (key == null);
+        else
+            headKeysAreEqual = headKey.equals(key);
+
+
+        if (headKeysAreEqual) {
+            V oldValue = head.getElement().value();
+            head = head.getNext();
+            size--;
+            return oldValue;
+        }
+
+        SinglyListNode<Entry<K,V>> current = head;
+
+        while (current.getNext() != null) {
+            boolean nextKeysAreEqual;
+            K nextKey = current.getNext().getElement().key();
+
+            if (nextKey == null)
+                nextKeysAreEqual = (key == null);
+            else
+                nextKeysAreEqual = nextKey.equals(key);
+
+            if (nextKeysAreEqual) {
+                V oldValue = current.getNext().getElement().value();
+                current.setNext(current.getNext().getNext());
+                size--;
+                return oldValue;
+            }
+            current = current.getNext();
+        }
         return null;
     }
 

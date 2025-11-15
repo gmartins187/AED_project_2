@@ -16,7 +16,27 @@ public interface Map<K,V> extends Serializable {
         
         public boolean equals(Object obj) {
            //TODO: Left as an exercise.
-            return false;
+            if(this == obj) return true;
+
+            if(!(obj instanceof Entry<?,?>)) return false;
+
+            @SuppressWarnings("unchecked")
+            Entry<K,V> other = (Entry<K, V>) obj;
+
+            boolean keysAreEqual;
+            if (this.key == null)
+                keysAreEqual = (other.key == null);
+            else
+                keysAreEqual = this.key.equals(other.key);
+
+            boolean valuesAreEqual;
+            if (this.value == null)
+                valuesAreEqual = (other.value == null);
+            else
+                valuesAreEqual = this.value.equals(other.value);
+
+            return keysAreEqual && valuesAreEqual;
+
 
         }
     }

@@ -46,9 +46,48 @@ package dataStructures;
      // than Integer.MAX VALUE.
      protected static int nextPrime( int number ){
          //TODO: Left as exercise
-        
-         return 0;
+         if ( number == 2 )
+             return 2;
+
+         if ( number % 2 == 0 )
+             number++;
+
+         while ( !isPrime(number) )
+         {
+             number += 2;
+
+             if (number < 0)
+                 return 0;
+         }
+
+         return number;
      }
+
+     //private method added
+    /**
+     * auxiliary method to test if a number is prime
+     * @param number the number to be tested
+     * @return true if it is a prime number, false otherwise
+     */
+    private static boolean isPrime( int number )
+    {
+        if ( number <= 1 )
+            return false;
+
+        if ( number == 2 )
+            return true;
+
+        if ( number % 2 == 0 )
+            return false;
+
+        for ( int i = 3; i * i <= number; i += 2 )
+        {
+            if ( number % i == 0 )
+                return false;
+        }
+
+        return true;
+    }
 
      // Returns true iff the hash table cannot contain more entries.
      protected boolean isFull( ){

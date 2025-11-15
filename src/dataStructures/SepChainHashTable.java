@@ -22,6 +22,14 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
     public SepChainHashTable( int capacity ){
         super(capacity);
        //TODO: Left as exercise
+        this.maxSize = (int) (MAX_LOAD_FACTOR * capacity);
+
+        @SuppressWarnings("unchecked")
+        Map<K,V>[] newTable = (Map<K, V>[]) new Map[capacity];
+        this.table = newTable;
+
+        for(int i=0; i<capacity; i++)
+            table[i] = new MapSinglyList<>();
     }
 
     // Returns the hash value of the specified key.
@@ -38,7 +46,10 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
      */
     public V get(K key) {
         //TODO: Left as an exercise.
-    	return null;
+    	if(key == null)
+            return null;
+
+        return table[hash(key)].get(key);
     }
 
     /**
@@ -55,13 +66,47 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
         if (isFull())
             rehash();
         //TODO: Left as an exercise.
-       
-        return null;
+
+        if(key == null || value == null)
+            return null;
+
+        int index = hash(key);
+
+        V oldValue = table[index].put(key, value);
+
+        if(oldValue == null)
+            currentSize++;
+
+        return oldValue;
     }
 
 
     private void rehash() {
         //TODO: Left as an exercise.
+        Map<K,V>[] oldTable = this.table;
+
+        int newCapacity = oldTable.length * 2;
+        @SuppressWarnings("unchecked")
+        Map<K,V>[] newTable = (Map<K,V>[]) new Map[newCapacity];
+        this.table = newTable;
+
+        for (int i = 0; i < newCapacity; i++) {
+            table[i] = new MapSinglyList<>();
+        }
+
+        this.maxSize = (int) (newCapacity * MAX_LOAD_FACTOR);
+        this.currentSize = 0;
+
+        for (Map<K,V> map : oldTable) {
+            if (map != null) {
+                Iterator<Map.Entry<K,V>> it = map.iterator();
+                while (it.hasNext()) {
+                    Map.Entry<K,V> entry = it.next();
+
+                    this.put(entry.key(), entry.value());
+                }
+            }
+        }
     }
 
     /**
@@ -75,7 +120,15 @@ public class SepChainHashTable<K,V> extends HashTable<K,V> {
      */
     public V remove(K key) {
         //TODO: Left as an exercise.
-        return null;
+        if(key == null)
+            return null;
+
+        V oldValue = table[hash(key)].remove(key);
+
+        if(oldValue != null)
+            currentSize--;
+
+        return oldValue;
     }
 
     /**

@@ -11,10 +11,12 @@ class KeysIterator<E> implements Iterator<E> {
 
     
      //TODO: Left as an exercise.
+    Iterator<Map.Entry<E,?>> iterator;
 
 
     public KeysIterator(Iterator<Map.Entry<E,?>> it) {
        //TODO: Left as an exercise.
+        this.iterator = it;
     }
 
     /**
@@ -25,7 +27,7 @@ class KeysIterator<E> implements Iterator<E> {
      */
     public boolean hasNext() {
 	//TODO: Left as an exercise.
-        return false;
+        return iterator.hasNext();
     }
 
     /**
@@ -36,7 +38,7 @@ class KeysIterator<E> implements Iterator<E> {
      */
     public E next() {
 	//TODO: Left as an exercise.
-        return null;
+        return iterator.next().key();
     }
 
     /**
@@ -45,5 +47,6 @@ class KeysIterator<E> implements Iterator<E> {
      */
     public void rewind() {
         //TODO: Left as an exercise.
+        iterator.rewind();
     }
 }
