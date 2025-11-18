@@ -23,11 +23,11 @@ public class RegionClass implements Region {
 
     private final SortedMap<String, Student> sortedAlphabeticalStudents;
     //sortedRating TAD's is this list?
-    private final SortedMap<String, Service> sortedRatingWith5Star;
-    private final SortedMap<String, Service> sortedRatingWith4Star;
-    private final SortedMap<String, Service> sortedRatingWith3Star;
-    private final SortedMap<String, Service> sortedRatingWith2Star;
-    private final SortedMap<String, Service> sortedRatingWith1Star;
+    private final List<Service> sortedRatingWith5Star;
+    private final List<Service> sortedRatingWith4Star;
+    private final List<Service> sortedRatingWith3Star;
+    private final List<Service> sortedRatingWith2Star;
+    private final List<Service> sortedRatingWith1Star;
 
     private int numOfEthnicities;
     private final List<String> ethnicityList;
@@ -53,12 +53,17 @@ public class RegionClass implements Region {
         this.ethnicityList = new ListInArray<>(numOfEthnicities);
 
         //MAP
-        this.students = new DoublyLinkedList<>();
+        this.students = new SepChainHashTable<>();
         this.services = new DoublyLinkedList<>();
 
         //AVL/redBlack
-        this.sortedAlphabeticalStudents = new BSTSortedMap<>();
-        this.sortedRatingServices = new SortedDoublyLinkedList<>(new ServicesComparator());
+        this.sortedAlphabeticalStudents = new AVLSortedMap<>();
+
+        this.sortedRatingWith5Star = new DoublyLinkedList<>();
+        this.sortedRatingWith4Star = new DoublyLinkedList<>();
+        this.sortedRatingWith3Star = new DoublyLinkedList<>();
+        this.sortedRatingWith2Star = new DoublyLinkedList<>();
+        this.sortedRatingWith1Star = new DoublyLinkedList<>();
     }
 
 
