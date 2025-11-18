@@ -22,6 +22,7 @@ public class RegionClass implements Region {
     private final List<Service> services;
 
     private final SortedMap<String, Student> sortedAlphabeticalStudents;
+    //Map
     private final SortedList<Service> sortedRatingServices;
 
     private int numOfEthnicities;
@@ -47,9 +48,11 @@ public class RegionClass implements Region {
         this.numOfEthnicities = 30;
         this.ethnicityList = new ListInArray<>(numOfEthnicities);
 
+        //MAP
         this.students = new DoublyLinkedList<>();
         this.services = new DoublyLinkedList<>();
 
+        //AVL/redBlack
         this.sortedAlphabeticalStudents = new BSTSortedMap<>();
         this.sortedRatingServices = new SortedDoublyLinkedList<>(new ServicesComparator());
     }
