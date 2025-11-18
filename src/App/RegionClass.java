@@ -18,7 +18,7 @@ public class RegionClass implements Region {
     private final String regionName;
 
     //Insertion Order
-    private final List<Student> students;
+    private final Map<String, Student> students;
     private final List<Service> services;
 
     private final SortedMap<String, Student> sortedAlphabeticalStudents;
