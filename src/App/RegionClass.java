@@ -18,11 +18,16 @@ public class RegionClass implements Region {
     private final String regionName;
 
     //Insertion Order
-    private final List<Student> students;
+    private final Map<String, Student> students;
     private final List<Service> services;
 
     private final SortedMap<String, Student> sortedAlphabeticalStudents;
-    private final SortedList<Service> sortedRatingServices;
+    //sortedRating TAD's is this list?
+    private final List<Service> sortedRatingWith5Star;
+    private final List<Service> sortedRatingWith4Star;
+    private final List<Service> sortedRatingWith3Star;
+    private final List<Service> sortedRatingWith2Star;
+    private final List<Service> sortedRatingWith1Star;
 
     private int numOfEthnicities;
     private final List<String> ethnicityList;
@@ -47,11 +52,18 @@ public class RegionClass implements Region {
         this.numOfEthnicities = 30;
         this.ethnicityList = new ListInArray<>(numOfEthnicities);
 
-        this.students = new DoublyLinkedList<>();
+        //MAP
+        this.students = new SepChainHashTable<>();
         this.services = new DoublyLinkedList<>();
 
-        this.sortedAlphabeticalStudents = new BSTSortedMap<>();
-        this.sortedRatingServices = new SortedDoublyLinkedList<>(new ServicesComparator());
+        //AVL/redBlack
+        this.sortedAlphabeticalStudents = new AVLSortedMap<>();
+
+        this.sortedRatingWith5Star = new DoublyLinkedList<>();
+        this.sortedRatingWith4Star = new DoublyLinkedList<>();
+        this.sortedRatingWith3Star = new DoublyLinkedList<>();
+        this.sortedRatingWith2Star = new DoublyLinkedList<>();
+        this.sortedRatingWith1Star = new DoublyLinkedList<>();
     }
 
 
