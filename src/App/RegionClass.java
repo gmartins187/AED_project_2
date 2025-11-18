@@ -22,8 +22,12 @@ public class RegionClass implements Region {
     private final List<Service> services;
 
     private final SortedMap<String, Student> sortedAlphabeticalStudents;
-    //Map
-    private final SortedList<Service> sortedRatingServices;
+    //sortedRating TAD's is this list?
+    private final SortedMap<String, Service> sortedRatingWith5Star;
+    private final SortedMap<String, Service> sortedRatingWith4Star;
+    private final SortedMap<String, Service> sortedRatingWith3Star;
+    private final SortedMap<String, Service> sortedRatingWith2Star;
+    private final SortedMap<String, Service> sortedRatingWith1Star;
 
     private int numOfEthnicities;
     private final List<String> ethnicityList;
