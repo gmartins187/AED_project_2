@@ -2,7 +2,6 @@ package App;
 
 import App.Services.*;
 import App.Students.Student;
-import App.Students.StudentsComparator;
 import App.Students.Thrifty;
 import dataStructures.*;
 
@@ -18,10 +17,11 @@ public class RegionClass implements Region {
     private final String regionName;
 
     //Insertion Order
-    private final Map<String, Student> students;
     private final List<Service> services;
+    //sorted by alphabetical order
+    private final SortedMap<String, Student> students;
 
-    private final SortedMap<String, Student> sortedAlphabeticalStudents;
+
     //sortedRating TAD's is this list?
     private final List<Service> sortedRatingWith5Star;
     private final List<Service> sortedRatingWith4Star;
@@ -29,8 +29,7 @@ public class RegionClass implements Region {
     private final List<Service> sortedRatingWith2Star;
     private final List<Service> sortedRatingWith1Star;
 
-    private int numOfEthnicities;
-    private final List<String> ethnicityList;
+    private final Map<String, List<Student>> ethnicityList;
 
 
 
@@ -49,15 +48,13 @@ public class RegionClass implements Region {
         this.rightBound = rightBound;
         this.regionName = regionName;
 
-        this.numOfEthnicities = 30;
-        this.ethnicityList = new ListInArray<>(numOfEthnicities);
+        this.ethnicityList = new SepChainHashTable<>();
 
         //MAP
-        this.students = new SepChainHashTable<>();
         this.services = new DoublyLinkedList<>();
 
         //AVL/redBlack
-        this.sortedAlphabeticalStudents = new AVLSortedMap<>();
+        this.students = new AVLSortedMap<>();
 
         this.sortedRatingWith5Star = new DoublyLinkedList<>();
         this.sortedRatingWith4Star = new DoublyLinkedList<>();
@@ -94,10 +91,19 @@ public class RegionClass implements Region {
 
     @Override
     public void addService(Service service) {
-        if(services.indexOf(service) < 0)
+        if(!hasService(service)){
             services.addLast(service);
-        if(sortedRatingServices.get(service) == null)
-            sortedRatingServices.add(service);
+            sortedRatingWith4Star.addLast(service);
+        }
+    }
+
+    /**
+     *
+     * @param service the service to check
+     * @return true if the service is in the system
+     */
+    private boolean hasService(Service service) {
+        return services.indexOf(service)<0;
     }
 
     @Override
@@ -112,16 +118,27 @@ public class RegionClass implements Region {
 
     @Override
     public void addStudent(Student student) {
-        String stuName = student.getName();
-        students.addLast(student);
-        if(sortedAlphabeticalStudents.get(stuName) == null)
-            sortedAlphabeticalStudents.put(stuName, student);
+        if(students.get(student.getName()) == null)
+            students.put(student.getName(), student);
+
+        //adds ethnicity
+        String stuEthnicity = student.getEthnicity().trim().toLowerCase();
+        if(ethnicityList.get(stuEthnicity) == null){
+            ethnicityList.put(stuEthnicity, new DoublyLinkedList<>());
+            List<Student> list = ethnicityList.get(stuEthnicity);
+            list.addLast(student);
+        } else{
+            List<Student> list = ethnicityList.get(stuEthnicity);
+            list.addLast(student);
+        }
     }
 
     @Override
     public boolean hasEthnicity(String country) {
-        if(country.equalsIgnoreCase("all")) return true;
-        return ethnicityList.indexOf(country.trim().toLowerCase()) >= 0;
+        if(country.equalsIgnoreCase("all"))
+            return !isEmpty();
+
+        return ethnicityList.get(country) != null;
     }
 
     @Override
@@ -132,32 +149,21 @@ public class RegionClass implements Region {
 
     @Override
     public Student getStudent(String name) {
-        Iterator<Student> iterator = students.iterator();
-        while (iterator.hasNext()) {
-            Student next = iterator.next();
-            if (next.getName().equalsIgnoreCase(name)) return next;
-        }
-
-        return null;
+        return students.get(name);
     }
 
     @Override
     public void removeStudent(String name) {
-        Student student = getStudent(name);
-        String ethnicity = getStudent(name).getEthnicity();
-        getService(student.getHome().getName()).removeStudent(student);
-        sortedAlphabeticalStudents.remove(name);
-        students.remove(students.indexOf(student));
-        if(!containsEthnicity(ethnicity))
-            ethnicityList.remove(ethnicityList.indexOf(ethnicity.toLowerCase()));
-    }
+        //remover da sorted list e da ethnicity list
+        name = name.trim().toLowerCase();
+        Student stu = students.get(name);
 
-    private boolean containsEthnicity(String ethnicity) {
-        Iterator<Student> it = students.iterator();
-        while (it.hasNext())
-            if(it.next().getEthnicity().equalsIgnoreCase(ethnicity)) return true;
+        students.remove(name);
 
-        return false;
+        List<Student> list = ethnicityList.get(stu.getEthnicity());
+        //remove student form ethnicity list TODO
+        if(list.remove(list.indexOf(stu))))
+            ethnicityList.remove(stu.getEthnicity());
     }
 
     @Override
@@ -177,26 +183,18 @@ public class RegionClass implements Region {
     }
 
     @Override
-    public void addEthnicity(String country) {
-        if(numOfEthnicities == 0)
-            ethnicityList.addFirst(country.trim().toLowerCase());
-        else ethnicityList.addLast(country.trim().toLowerCase());
-        numOfEthnicities++;
-    }
-
-    @Override
     public Iterator<Student> listStudents(String from) {
         if(from.equalsIgnoreCase("all"))
-            return sortedAlphabeticalStudents.values();
+            return students.values();
         else
-            return new FilterIterator<>(students.iterator(), new IsFrom(from));
+            return new FilterIterator<>(students.values(), new IsFrom(from));
     }
 
     @Override
     public Iterator<Student> listUsersIn(Service service, String order) {
 
         TwoWayList<Student> ret = new DoublyLinkedList<>();
-        Iterator<Student> it = students.iterator();
+        Iterator<Student> it = students.values();
         while(it.hasNext()){
             Student next = it.next();
             if(next.getLocation().equals(service)) ret.addLast(next);
