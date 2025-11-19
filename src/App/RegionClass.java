@@ -2,7 +2,6 @@ package App;
 
 import App.Services.*;
 import App.Students.Student;
-import App.Students.StudentsComparator;
 import App.Students.Thrifty;
 import dataStructures.*;
 
@@ -18,10 +17,11 @@ public class RegionClass implements Region {
     private final String regionName;
 
     //Insertion Order
-    private final Map<String, Student> students;
     private final List<Service> services;
+    //sorted by alphabetical order
+    private final SortedMap<String, Student> students;
 
-    private final SortedMap<String, Student> sortedAlphabeticalStudents;
+
     //sortedRating TAD's is this list?
     private final List<Service> sortedRatingWith5Star;
     private final List<Service> sortedRatingWith4Star;
@@ -29,8 +29,7 @@ public class RegionClass implements Region {
     private final List<Service> sortedRatingWith2Star;
     private final List<Service> sortedRatingWith1Star;
 
-    private int numOfEthnicities;
-    private final List<String> ethnicityList;
+    private final Map<String, List<Student>> ethnicityList;
 
 
 
@@ -49,15 +48,13 @@ public class RegionClass implements Region {
         this.rightBound = rightBound;
         this.regionName = regionName;
 
-        this.numOfEthnicities = 30;
-        this.ethnicityList = new ListInArray<>(numOfEthnicities);
+        this.ethnicityList = new SepChainHashTable<>();
 
         //MAP
-        this.students = new SepChainHashTable<>();
         this.services = new DoublyLinkedList<>();
 
         //AVL/redBlack
-        this.sortedAlphabeticalStudents = new AVLSortedMap<>();
+        this.students = new AVLSortedMap<>();
 
         this.sortedRatingWith5Star = new DoublyLinkedList<>();
         this.sortedRatingWith4Star = new DoublyLinkedList<>();
@@ -94,10 +91,19 @@ public class RegionClass implements Region {
 
     @Override
     public void addService(Service service) {
-        if(services.indexOf(service) < 0)
+        if(!hasService(service)){
             services.addLast(service);
-        if(sortedRatingServices.get(service) == null)
-            sortedRatingServices.add(service);
+            sortedRatingWith4Star.addLast(service);
+        }
+    }
+
+    /**
+     *
+     * @param service the service to check
+     * @return true if the service is in the system
+     */
+    private boolean hasService(Service service) {
+        return services.indexOf(service)<0;
     }
 
     @Override
@@ -112,16 +118,27 @@ public class RegionClass implements Region {
 
     @Override
     public void addStudent(Student student) {
-        String stuName = student.getName();
-        students.addLast(student);
-        if(sortedAlphabeticalStudents.get(stuName) == null)
-            sortedAlphabeticalStudents.put(stuName, student);
+        if(students.get(student.getName()) == null)
+            students.put(student.getName(), student);
+
+        //adds ethnicity
+        String stuEthnicity = student.getEthnicity().trim().toLowerCase();
+        if(ethnicityList.get(stuEthnicity) == null){
+            ethnicityList.put(stuEthnicity, new DoublyLinkedList<>());
+            List<Student> list = ethnicityList.get(stuEthnicity);
+            list.addLast(student);
+        } else{
+            List<Student> list = ethnicityList.get(stuEthnicity);
+            list.addLast(student);
+        }
     }
 
     @Override
     public boolean hasEthnicity(String country) {
-        if(country.equalsIgnoreCase("all")) return true;
-        return ethnicityList.indexOf(country.trim().toLowerCase()) >= 0;
+        if(country.equalsIgnoreCase("all"))
+            return !isEmpty();
+
+        return ethnicityList.get(country) != null;
     }
 
     @Override
@@ -132,32 +149,21 @@ public class RegionClass implements Region {
 
     @Override
     public Student getStudent(String name) {
-        Iterator<Student> iterator = students.iterator();
-        while (iterator.hasNext()) {
-            Student next = iterator.next();
-            if (next.getName().equalsIgnoreCase(name)) return next;
-        }
-
-        return null;
+        return students.get(name);
     }
 
     @Override
     public void removeStudent(String name) {
-        Student student = getStudent(name);
-        String ethnicity = getStudent(name).getEthnicity();
-        getService(student.getHome().getName()).removeStudent(student);
-        sortedAlphabeticalStudents.remove(name);
-        students.remove(students.indexOf(student));
-        if(!containsEthnicity(ethnicity))
-            ethnicityList.remove(ethnicityList.indexOf(ethnicity.toLowerCase()));
-    }
+        //remover da sorted list e da ethnicity list
+        name = name.trim().toLowerCase();
+        Student stu = students.get(name);
 
-    private boolean containsEthnicity(String ethnicity) {
-        Iterator<Student> it = students.iterator();
-        while (it.hasNext())
-            if(it.next().getEthnicity().equalsIgnoreCase(ethnicity)) return true;
+        students.remove(name);
 
-        return false;
+        List<Student> list = ethnicityList.get(stu.getEthnicity());
+        //remove student form ethnicity list
+        list.remove(list.indexOf(stu));
+        if(list.isEmpty()) ethnicityList.remove(stu.getEthnicity());
     }
 
     @Override
@@ -177,39 +183,28 @@ public class RegionClass implements Region {
     }
 
     @Override
-    public void addEthnicity(String country) {
-        if(numOfEthnicities == 0)
-            ethnicityList.addFirst(country.trim().toLowerCase());
-        else ethnicityList.addLast(country.trim().toLowerCase());
-        numOfEthnicities++;
-    }
-
-    @Override
     public Iterator<Student> listStudents(String from) {
         if(from.equalsIgnoreCase("all"))
-            return sortedAlphabeticalStudents.values();
-        else
-            return new FilterIterator<>(students.iterator(), new IsFrom(from));
+            return students.values();
+        else{
+            List<Student> list = ethnicityList.get(from);
+            return list.iterator();
+        }
     }
 
     @Override
     public Iterator<Student> listUsersIn(Service service, String order) {
+        TwoWayList<Student> ret = service.getStudents();
 
-        TwoWayList<Student> ret = new DoublyLinkedList<>();
-        Iterator<Student> it = students.iterator();
-        while(it.hasNext()){
-            Student next = it.next();
-            if(next.getLocation().equals(service)) ret.addLast(next);
-        }
-        if(order.equals(">")){
-            return ret.iterator();
-        } else {
+        if(order.equalsIgnoreCase("<")){
             return ret.twoWayiterator();
+        } else{ //(equals(">"))
+            return ret.iterator();
         }
     }
 
     @Override
-    public String whereStudent(Student student) {
+        public String whereStudent(Student student) {
         Service location = student.getLocation();
         return String.format("%s is at %s %s (%d, %d).",
                 student.getName(), location.getName(),
@@ -219,7 +214,25 @@ public class RegionClass implements Region {
 
     @Override
     public Iterator<Service> listServicesByReview() {
-        return sortedRatingServices.iterator();
+        List<Service> ret = mergeLists(sortedRatingWith5Star,
+                sortedRatingWith4Star,
+                sortedRatingWith3Star,
+                sortedRatingWith2Star,
+                sortedRatingWith1Star);
+        return ret.iterator();
+    }
+
+    private List<Service> mergeLists(List<Service> l1, List<Service> l2,
+                                     List<Service> l3, List<Service> l4, List<Service> l5) {
+        List<Service> ret = new DoublyLinkedList<>();
+        List<List<Service>> lists = new ListInArray<>(5);
+        for(int i=0; i<lists.size(); i++){
+            Iterator<Service> it = lists.get(i).iterator();
+            while(it.hasNext()){
+                ret.addLast(it.next());
+            }
+        }
+        return ret;
     }
 
     @Override
@@ -297,35 +310,69 @@ public class RegionClass implements Region {
     @Override
     public String findMostRelevantService(Student student, String type) {
         if(student instanceof Thrifty){
-            Iterator<Service> it = services.iterator();
-            Service ret = null;
-            int MinPrice = Integer.MAX_VALUE;
-            while(it.hasNext()){
-                Service next = it.next();
-                if(next.getType().equals(type) && next.getPrice() < MinPrice) {
-                    MinPrice = next.getPrice();
-                    ret = next;
-                }
-            }
-            return ret.getName();
+            return findThriftyMostRelevant(type);
         } else {
-            Iterator<Service> it = sortedRatingServices.iterator();
-            while(it.hasNext()){
-                Service next = it.next();
-                if(next.getType().equals(type)) return next.getName();
-            }
-            return null;
+            return findOtherMostRelevant(type);
         }
+    }
+
+    private String findOtherMostRelevant(String type) {
+        Iterator<Service> it = mergeLists(sortedRatingWith5Star,
+                sortedRatingWith4Star,
+                sortedRatingWith3Star,
+                sortedRatingWith2Star,
+                sortedRatingWith1Star).iterator();
+        while(it.hasNext()){
+            Service next = it.next();
+            if(next.getType().equals(type)) return next.getName();
+        }
+        return null;
+    }
+
+    private String findThriftyMostRelevant(String type) {
+        Iterator<Service> it = services.iterator();
+        Service ret = null;
+
+        int MinPrice = Integer.MAX_VALUE;
+        while(it.hasNext()){
+            Service next = it.next();
+            if(next.getType().equals(type) && next.getPrice() < MinPrice) {
+                MinPrice = next.getPrice();
+            }
+        }
+        it.rewind();
+
+        while(it.hasNext()) {
+            Service next = it.next();
+            if(next.getType().equalsIgnoreCase(type) && next.getPrice() == MinPrice)
+                ret = next;
+        }
+
+        return ret.getName();
     }
 
     @Override
     public void removeServiceFromSorted(Service loc) {
-        sortedRatingServices.remove(loc);
+        int rating = (int) loc.getAverageRating();
+        switch (rating){
+            case 1 -> sortedRatingWith1Star.remove(sortedRatingWith1Star.indexOf(loc));
+            case 2 -> sortedRatingWith2Star.remove(sortedRatingWith2Star.indexOf(loc));
+            case 3 -> sortedRatingWith3Star.remove(sortedRatingWith3Star.indexOf(loc));
+            case 4 -> sortedRatingWith4Star.remove(sortedRatingWith4Star.indexOf(loc));
+            case 5 -> sortedRatingWith5Star.remove(sortedRatingWith5Star.indexOf(loc));
+        }
     }
 
     @Override
     public void addServiceToSorted(Service loc) {
-        sortedRatingServices.add(loc);
+        int rating = (int) loc.getAverageRating();
+        switch (rating){
+            case 1 -> sortedRatingWith1Star.addLast(loc);
+            case 2 -> sortedRatingWith2Star.addLast(loc);
+            case 3 -> sortedRatingWith3Star.addLast(loc);
+            case 4 -> sortedRatingWith4Star.addLast(loc);
+            case 5 -> sortedRatingWith5Star.addLast(loc);
+        }
     }
 
 

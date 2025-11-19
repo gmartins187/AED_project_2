@@ -86,11 +86,6 @@ public interface Region extends Serializable {
     boolean hasStudents();
 
     /**
-     * @param country the 'ethnicity' to add
-     */
-    void addEthnicity(String country);
-
-    /**
      * list all the students from the region
      * @param from the ethnicity of the students to iterate
      */

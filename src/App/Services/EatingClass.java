@@ -1,14 +1,12 @@
 package App.Services;
 
 import App.Students.Student;
-import dataStructures.DoublyLinkedList;
-import dataStructures.List;
-import dataStructures.ListInArray;
+import dataStructures.*;
 
 public class EatingClass extends ServiceAbstractClass implements Eating{
 
     private final List<Student> visited;
-    private final List<Student> inService;
+    private final TwoWayList<Student> inService;
 
     private final int capacity;
 
@@ -31,7 +29,7 @@ public class EatingClass extends ServiceAbstractClass implements Eating{
         this.capacity = capacity;
 
         visited = new ListInArray<>(MAX_CAPACITY);
-        inService = new ListInArray<>(capacity);
+        inService = new DoublyLinkedList<>();
 
         numOfPeople = 0;
     }
@@ -62,5 +60,10 @@ public class EatingClass extends ServiceAbstractClass implements Eating{
     @Override
     public boolean isEmpty() {
         return inService.isEmpty();
+    }
+
+    @Override
+    public TwoWayList<Student> getStudents() {
+        return inService;
     }
 }

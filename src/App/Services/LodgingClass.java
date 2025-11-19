@@ -1,16 +1,14 @@
 package App.Services;
 
-import dataStructures.DoublyLinkedList;
-import dataStructures.List;
+import dataStructures.*;
 import App.Students.Student;
-import dataStructures.ListInArray;
 
 public class LodgingClass extends ServiceAbstractClass implements Lodging {
 
     private final int capacity;
 
     private final List<Student> visited;
-    private final List<Student> inService;
+    private final TwoWayList<Student> inService;
 
     private int numOfPeople;
 
@@ -60,5 +58,10 @@ public class LodgingClass extends ServiceAbstractClass implements Lodging {
     @Override
     public boolean isEmpty() {
         return inService.isEmpty();
+    }
+
+    @Override
+    public TwoWayList<Student> getStudents() {
+        return inService;
     }
 }

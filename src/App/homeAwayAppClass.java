@@ -152,7 +152,6 @@ public class homeAwayAppClass implements HomeAwayApp{
             throw new AlreadyExists();
         else {
             Lodging lodgingService = (Lodging) this.currentRegion.getService(lodgingName);
-            if(!this.currentRegion.hasEthnicity(country)) this.currentRegion.addEthnicity(country);
             switch (type){
                 case OUTGOING -> this.currentRegion.addStudent(new OutgoingClass(name, country, lodgingService, type));
                 case BOOKISH -> this.currentRegion.addStudent(new BookishClass(name, country, lodgingService, type));
