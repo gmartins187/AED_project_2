@@ -1,6 +1,8 @@
 package App.Services;
 
 import App.Students.Student;
+import dataStructures.TwoWayIterator;
+import dataStructures.TwoWayList;
 
 import java.io.Serializable;
 
@@ -85,4 +87,9 @@ public interface Service extends Serializable {
      * @return true if there is no student in the service
      */
     boolean isEmpty();
+
+    /**
+     * @return an iterator with all the students present in the service.
+     */
+    TwoWayList<Student> getStudents();
 }

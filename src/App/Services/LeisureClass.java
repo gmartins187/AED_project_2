@@ -1,6 +1,8 @@
 package App.Services;
 
 import App.Students.Student;
+import dataStructures.TwoWayIterator;
+import dataStructures.TwoWayList;
 
 public class LeisureClass extends ServiceAbstractClass implements Leisure{
 
@@ -40,5 +42,10 @@ public class LeisureClass extends ServiceAbstractClass implements Leisure{
     @Override
     public boolean isEmpty() {
         return false;
+    }
+
+    @Override
+    public TwoWayList<Student> getStudents() {
+        return null;
     }
 }
