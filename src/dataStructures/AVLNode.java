@@ -1,4 +1,5 @@
 package dataStructures;
+
 /**
  * AVL Tree Node
  * @author AED  Team
@@ -13,11 +14,11 @@ class AVLNode<E> extends BTNode<E> {
         super(elem);
         height=0;
     }
-    
+
     public AVLNode( E element, AVLNode<E> parent,
                     AVLNode<E> left, AVLNode<E> right ){
-        super(element,parent,left,right);
         //TODO: Left as an exercise.
+        super(element, parent, left, right);
     }
     public AVLNode( E element, AVLNode<E> parent){
         super(element, parent,null, null);
@@ -38,6 +39,8 @@ class AVLNode<E> extends BTNode<E> {
      */
     public void setLeftChild(AVLNode<E> node) {
         //TODO: Left as an exercise.
+        super.setLeftChild(node);
+        updateHeight();
     }
 
     /**
@@ -46,9 +49,23 @@ class AVLNode<E> extends BTNode<E> {
      */
     public void setRightChild(AVLNode<E> node) {
         //TODO: Left as an exercise.
+        super.setRightChild(node);
+        updateHeight();
     }
+
+
 // others public methods
 //TODO: Left as an exercise.
 
+    public void updateHeight(){
+        this.height = 1 +
+                Math.max(height((AVLNode<E>) getLeftChild()),
+                        height((AVLNode<E>) getRightChild()));
+    }
 
+    public int getBalanceFactor() {
+        int leftHeight = height((AVLNode<E>) getLeftChild());
+        int rightHeight = height((AVLNode<E>) getRightChild());
+        return rightHeight - leftHeight;
+    }
 }
