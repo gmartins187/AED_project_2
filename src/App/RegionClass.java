@@ -160,10 +160,11 @@ public class RegionClass implements Region {
 
         students.remove(name);
 
-        List<Student> list = ethnicityList.get(stu.getEthnicity());
+        List<Student> list = ethnicityList.get(stu.getEthnicity().toLowerCase());
         //remove student form ethnicity list
         list.remove(list.indexOf(stu));
-        if(list.isEmpty()) ethnicityList.remove(stu.getEthnicity());
+        if(list.isEmpty())
+            ethnicityList.remove(stu.getEthnicity());
     }
 
     @Override
@@ -348,17 +349,18 @@ public class RegionClass implements Region {
 
         while(it.hasNext()) {
             Service next = it.next();
-            if(next.getType().equalsIgnoreCase(type) && next.getPrice() == MinPrice)
+            if(next.getType().equalsIgnoreCase(type) && next.getPrice() == MinPrice) {
                 ret = next;
+                break;
+            }
         }
 
         return ret.getName();
     }
 
     @Override
-    public void removeServiceFromSorted(Service loc) {
-        int rating = (int) loc.getAverageRating();
-        switch (rating){
+    public void removeServiceFromSorted(Service loc, int rate) {
+        switch (rate){
             case 1 -> sortedRatingWith1Star.remove(sortedRatingWith1Star.indexOf(loc));
             case 2 -> sortedRatingWith2Star.remove(sortedRatingWith2Star.indexOf(loc));
             case 3 -> sortedRatingWith3Star.remove(sortedRatingWith3Star.indexOf(loc));
@@ -368,9 +370,8 @@ public class RegionClass implements Region {
     }
 
     @Override
-    public void addServiceToSorted(Service loc) {
-        int rating = (int) loc.getAverageRating();
-        switch (rating){
+    public void addServiceToSorted(Service loc, int rate) {
+        switch (rate){
             case 1 -> sortedRatingWith1Star.addLast(loc);
             case 2 -> sortedRatingWith2Star.addLast(loc);
             case 3 -> sortedRatingWith3Star.addLast(loc);
@@ -393,12 +394,14 @@ public class RegionClass implements Region {
     @Override
     public void addReview(Service service, Review review) {
         int oldAvg = (int) service.getAverageRating();
+
         service.addReview(review);
+
         int newAvg = (int) service.getAverageRating();
 
         if(oldAvg != newAvg){
-            removeServiceFromSorted(service);
-            addServiceToSorted(service);
+            removeServiceFromSorted(service, oldAvg);
+            addServiceToSorted(service, newAvg);
         }
     }
 }

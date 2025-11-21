@@ -154,14 +154,16 @@ public interface Region extends Serializable {
     /**
      * removes this service
      * @param loc service to remove
+     * @param rating
      */
-    void removeServiceFromSorted(Service loc);
+    void removeServiceFromSorted(Service loc, int rating);
 
     /**
      * adds service back to the sorted list
      * @param loc the service to add
+     * @param rating
      */
-    void addServiceToSorted(Service loc);
+    void addServiceToSorted(Service loc, int rating);
 
     /**
      * save the global counter when the region is saved
