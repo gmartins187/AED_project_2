@@ -103,7 +103,7 @@ public class RegionClass implements Region {
      * @return true if the service is in the system
      */
     private boolean hasService(Service service) {
-        return services.indexOf(service)<0;
+        return services.indexOf(service)>=0;
     }
 
     @Override
@@ -119,7 +119,7 @@ public class RegionClass implements Region {
     @Override
     public void addStudent(Student student) {
         if(students.get(student.getName()) == null)
-            students.put(student.getName(), student);
+            students.put(student.getName().toLowerCase(), student);
 
         //adds ethnicity
         String stuEthnicity = student.getEthnicity().trim().toLowerCase();
@@ -138,7 +138,7 @@ public class RegionClass implements Region {
         if(country.equalsIgnoreCase("all"))
             return !isEmpty();
 
-        return ethnicityList.get(country) != null;
+        return ethnicityList.get(country.toLowerCase()) != null;
     }
 
     @Override
@@ -149,7 +149,7 @@ public class RegionClass implements Region {
 
     @Override
     public Student getStudent(String name) {
-        return students.get(name);
+        return students.get(name.toLowerCase());
     }
 
     @Override
@@ -187,7 +187,7 @@ public class RegionClass implements Region {
         if(from.equalsIgnoreCase("all"))
             return students.values();
         else{
-            List<Student> list = ethnicityList.get(from);
+            List<Student> list = ethnicityList.get(from.toLowerCase());
             return list.iterator();
         }
     }

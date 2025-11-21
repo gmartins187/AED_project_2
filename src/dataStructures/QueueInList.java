@@ -19,7 +19,7 @@ public class QueueInList<E> implements Queue<E> {
     @Override
     public boolean isEmpty() {
         //TODO: Left as an exercise.
-        return false;
+        return list.isEmpty();
     }
 
     /**
@@ -30,7 +30,7 @@ public class QueueInList<E> implements Queue<E> {
     @Override
     public int size() {
         //TODO: Left as an exercise.
-        return 0;
+        return list.size();
     }
 
     /**
@@ -41,6 +41,7 @@ public class QueueInList<E> implements Queue<E> {
     @Override
     public void enqueue(E element) {
         //TODO: Left as an exercise.
+        list.addLast(element);
     }
 
     /**
@@ -52,7 +53,12 @@ public class QueueInList<E> implements Queue<E> {
     @Override
     public E dequeue() {
         //TODO: Left as an exercise.
-        return null;
+        if(list.isEmpty())
+            throw new EmptyStackException();
+
+        E oldElem = list.getFirst();
+        list.remove(0);
+        return oldElem;
     }
     /**
      * Returns the element at the front of the queue.
@@ -63,6 +69,9 @@ public class QueueInList<E> implements Queue<E> {
     @Override
     public E peek() {
         //TODO: Left as an exercise.
-        return null;
+        if(list.isEmpty())
+            throw new EmptyStackException();
+
+        return list.getFirst();
     }
 }

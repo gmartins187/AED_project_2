@@ -7,20 +7,36 @@ package dataStructures;
  * @param <V> Generic Value
  */
 abstract class AdvancedBSTree <K extends Comparable<K>,V> extends BSTSortedMap<K,V>{
-      /**
- 	* Performs a single left rotation rooted at z node.
- 	* Node y was a  right  child  of z before the  rotation,
- 	* then z becomes the left child of y after the rotation.
- 	* @param z - root of the rotation
-	 * @pre: z has a right child
- 	*/
-	protected void rotateLeft( BTNode<Entry<K,V>> z){
-   	 //TODO: Left as an exercise.
-   	 //  a single rotation modifies a constant number of parent-child relationships,
-    	// it can be implemented in O(1)time
-	}
+    /**
+     * Performs a single left rotation rooted at z node.
+     * Node y was a  right  child  of z before the  rotation,
+     * then z becomes the left child of y after the rotation.
+     * @param z - root of the rotation
+     * @pre: z has a right child
+     */
+    protected void rotateLeft( BTNode<Entry<K,V>> z){
+        //TODO: Left as an exercise.
+        //  a single rotation modifies a constant number of parent-child relationships,
+        // it can be implemented in O(1)time
 
-     /**
+        BTNode<Entry<K, V>> y = (BTNode<Entry<K, V>>) z.getRightChild();
+        BTNode<Entry<K, V>> x = (BTNode<Entry<K, V>>) y.getLeftChild();
+
+        z.setRightChild(x);
+        if (x != null) {
+            x.setParent(z);
+        }
+
+        updateParent(z, y);
+
+        y.setLeftChild(z);
+        z.setParent(y);
+
+        if (z instanceof AVLNode) ((AVLNode<?>) z).updateHeight();
+        if (y instanceof AVLNode) ((AVLNode<?>) y).updateHeight();
+    }
+
+    /**
      * Performs a single right rotation rooted at z node.
      * Node y was a left  child  of z before the  rotation,
      * then z becomes the right child of y after the rotation.
@@ -31,6 +47,21 @@ abstract class AdvancedBSTree <K extends Comparable<K>,V> extends BSTSortedMap<K
         //TODO: Left as an exercise.
         //  a single rotation modifies a constant number of parent-child relationships,
         // it can be implemented in O(1)time
+        BTNode<Entry<K, V>> y = (BTNode<Entry<K, V>>) z.getLeftChild();
+        BTNode<Entry<K, V>> x = (BTNode<Entry<K, V>>) y.getRightChild();
+
+        z.setLeftChild(x);
+        if (x != null) {
+            x.setParent(z);
+        }
+
+        updateParent(z, y);
+
+        y.setRightChild(z);
+        z.setParent(y);
+
+        if (z instanceof AVLNode) ((AVLNode<?>) z).updateHeight();
+        if (y instanceof AVLNode) ((AVLNode<?>) y).updateHeight();
     }
 
     /**
@@ -55,7 +86,45 @@ abstract class AdvancedBSTree <K extends Comparable<K>,V> extends BSTSortedMap<K
         // can be implemented through case analysis either as a single rotation or as a double rotation.
         // The double rotation arises when position x has the middle of the three relevant keys
         // and is first rotated above its parent Y, and then above what was originally its grandparent Z.
-        // In any of the cases, the trinode restructuring is completed with O(1)running time
-        return null;
+        // In any of the cases, the trinode restructuring is completed with O(1) running time
+
+        BTNode<Entry<K, V>> y = (BTNode<Entry<K, V>>) x.getParent();
+        BTNode<Entry<K, V>> z = (BTNode<Entry<K, V>>) y.getParent();
+
+        boolean yIsLeft = (z.getLeftChild() == y);
+        boolean xIsLeft = (y.getLeftChild() == x);
+
+        if (yIsLeft && xIsLeft) {
+            rotateRight(z);
+            return y;
+        } else if (!yIsLeft && !xIsLeft) {
+            rotateLeft(z);
+            return y;
+        } else if (yIsLeft && !xIsLeft) {
+            rotateLeft(y);
+            rotateRight(z);
+            return x;
+        } else {
+            rotateRight(y);
+            rotateLeft(z);
+            return x;
+        }
+    }
+
+    //private methods
+
+    private void updateParent(BTNode<Entry<K, V>> oldSubRoot, BTNode<Entry<K, V>> newSubRoot) {
+        BTNode<Entry<K, V>> parent = (BTNode<Entry<K, V>>) oldSubRoot.getParent();
+        newSubRoot.setParent(parent);
+
+        if (parent == null) {
+            this.root = newSubRoot;
+        } else {
+            if (parent.getLeftChild() == oldSubRoot) {
+                parent.setLeftChild(newSubRoot);
+            } else {
+                parent.setRightChild(newSubRoot);
+            }
+        }
     }
 }

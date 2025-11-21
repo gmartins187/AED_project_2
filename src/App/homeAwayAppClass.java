@@ -197,6 +197,9 @@ public class homeAwayAppClass implements HomeAwayApp{
 
     @Override
     public void changeStudentLocation(String name, String locationName) {
+        name = name.toLowerCase();
+        locationName = locationName.toLowerCase();
+
         Service service = currentRegion.getService(locationName);
         Student student = currentRegion.getStudent(name);
 
@@ -208,12 +211,13 @@ public class homeAwayAppClass implements HomeAwayApp{
             throw new InvalidService();
         else if (student.getLocation() == service)
             throw new AlreadyThere();
-        if (service instanceof Eating && service.isFull())
+        else if (service instanceof Eating && service.isFull())
             throw new ServiceFull();
 
         student.setLocation(service);
         student.pingService(service);
     }
+
 
 
     @Override
@@ -258,7 +262,6 @@ public class homeAwayAppClass implements HomeAwayApp{
     @Override
     public String locateStudent(String name) {
         Student stu = this.currentRegion.getStudent(name);
-
 
         if(stu == null) throw new DoesNotExist();
 

@@ -26,7 +26,7 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
     public Entry<K, V> minEntry() {
         if (isEmpty())
             throw new EmptyMapException();
-        return furtherLeftElement().getElement();
+        return  furtherLeftElement().getElement();
     }
 
     /**
@@ -61,7 +61,6 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
 
     private BTNode<Entry<K,V>> getNode(BTNode<Entry<K,V>> node, K key) {
         //TODO: Left as an exercise.
-
         if(node == null)
             return null;
 
@@ -141,8 +140,7 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
      */
     @Override
     public V remove(K key) {
-        //TODO: Left as an exercise.
-
+        //TODO left as exercise
         BTNode<Entry<K,V>> node = getNode((BTNode<Entry<K,V>>) root, key);
 
         if (node == null)
@@ -158,14 +156,6 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
         return oldValue;
     }
 
-    //private added methods
-    /**
-     * Removes a leaf node (node with no children) from the BST.
-     * If the node is the root, sets root to null.
-     * Otherwise, removes the reference from the parent node.
-     *
-     * @param node the leaf node to remove
-     */
     private void removeLeaf(BTNode<Entry<K,V>> node) {
         BTNode<Entry<K,V>> parent = (BTNode<Entry<K,V>>) node.getParent();
 
@@ -180,14 +170,6 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
             parent.setRightChild(null);
     }
 
-    /**
-     * Removes a node that has exactly one child from the BST.
-     * Connects the node's parent directly to the node's only child,
-     * effectively bypassing the node being removed.
-     * If the node is the root, the child becomes the new root.
-     *
-     * @param node the node with a single child to remove
-     */
     private void removeSingleChild(BTNode<Entry<K,V>> node) {
 
         BTNode<Entry<K,V>> child =
@@ -211,14 +193,6 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
         child.setParent(parent);
     }
 
-    /**
-     * Removes a node that has two children from the BST.
-     * Finds the in-order predecessor (the furthest right element in the left subtree),
-     * replaces the node's element with the predecessor's element,
-     * and then removes the predecessor node.
-     *
-     * @param node the node to remove
-     */
     private void removeTwoChildren(BTNode<Entry<K,V>> node) {
 
         BTNode<Entry<K,V>> pred =
@@ -232,23 +206,13 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
             removeSingleChild(pred);
     }
 
-    /**
-     *
-     * @param pred the one to check if it does not have any child
-     * @return true if it does have zero child
-     */
     private boolean isLeaf(BTNode<Entry<K, V>> pred) {
         return (pred.getRightChild() == null && pred.getLeftChild() == null);
     }
-
-    /**
-     *
-     * @param node the node to check if it has only one child
-     * @return true if it only has one child
-     */
     private boolean hasSingleChild(BTNode<Entry<K,V>> node) {
         return (node.getLeftChild() == null) ||  (node.getRightChild() == null);
     }
+
 
     /**
      * Returns an iterator of the entries in the dictionary.
@@ -257,7 +221,7 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
      */
     @Override
     public Iterator<Entry<K, V>> iterator() {
-        return new InOrderIterator((BTNode<Entry<K,V>>) root);
+        return new InOrderIterator<>((BTNode<Entry<K,V>>) root);
     }
 
     /**
@@ -266,16 +230,18 @@ public class BSTSortedMap<K extends Comparable<K>,V> extends BTree<Map.Entry<K,V
      * @return iterator of the values in the dictionary
      */
     @Override
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Iterator<V> values() {
         return new ValuesIterator(iterator());
     }
 
-    /**
+    /**new ValuesIterator(iterator())
      * Returns an iterator of the keys in the dictionary.
      *
      * @return iterator of the keys in the dictionary
      */
     @Override
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Iterator<K> keys() {
         return new KeysIterator(iterator());
     }
