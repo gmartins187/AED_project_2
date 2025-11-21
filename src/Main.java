@@ -226,7 +226,8 @@ public class Main {
         } catch (ServiceFull e) {
             System.out.println(INVALID_CAPACITY);
         } catch (AlreadyExists e){
-            System.out.println(app.getServiceName(name) + ALREADY_EXISTS); }
+            System.out.println(app.getServiceName(name) + ALREADY_EXISTS);
+        }
     }
 
 
@@ -262,9 +263,9 @@ public class Main {
         String lodgingName = "";
         try{
             String type = in.nextLine().trim().toLowerCase();
-            name = in.nextLine();
+            name = in.nextLine().trim();
             String country = in.nextLine().trim();
-            lodgingName = in.nextLine();
+            lodgingName = in.nextLine().trim();
 
             app.newStudent(type, name, country, lodgingName);
             System.out.printf(STUDENT_ADDED, name);
@@ -342,7 +343,6 @@ public class Main {
                     app.getServiceName(locationName));
 
             if(isDistracted) System.out.printf(IS_DISTRACTED, name);
-
             System.out.println();
         } catch (InvalidLocation e){
             System.out.printf(UNKNOWN, locationName);
