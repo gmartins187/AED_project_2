@@ -225,13 +225,17 @@ public class RegionClass implements Region {
     private List<Service> mergeLists(List<Service> l1, List<Service> l2,
                                      List<Service> l3, List<Service> l4, List<Service> l5) {
         List<Service> ret = new DoublyLinkedList<>();
+
         List<List<Service>> lists = new ListInArray<>(5);
+        lists.addLast(l1);lists.addLast(l2);lists.addLast(l3);lists.addLast(l4);lists.addLast(l5);
+
         for(int i=0; i<lists.size(); i++){
             Iterator<Service> it = lists.get(i).iterator();
             while(it.hasNext()){
                 ret.addLast(it.next());
             }
         }
+
         return ret;
     }
 
@@ -384,5 +388,17 @@ public class RegionClass implements Region {
     @Override
     public int getSavedOrderCounter() {
         return this.savedOrderCounter;
+    }
+
+    @Override
+    public void addReview(Service service, Review review) {
+        int oldAvg = (int) service.getAverageRating();
+        service.addReview(review);
+        int newAvg = (int) service.getAverageRating();
+
+        if(oldAvg != newAvg){
+            removeServiceFromSorted(service);
+            addServiceToSorted(service);
+        }
     }
 }

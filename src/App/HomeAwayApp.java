@@ -214,4 +214,9 @@ public interface HomeAwayApp {
      * @return yes if it is
      */
     boolean isStudentDistracted(String name, String locationName);
+
+    /**
+     * @return true if the app has a non-null region
+     */
+    boolean hasRegion();
 }

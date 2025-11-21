@@ -285,16 +285,14 @@ public class homeAwayAppClass implements HomeAwayApp{
 
     @Override
     public void rateService(String name, int numericRate, String tag) {
-        Service loc = this.currentRegion.getService(name);
+        Service service = this.currentRegion.getService(name);
 
         if (numericRate < 1 || numericRate > 5)
             throw new InvalidType();
-        else if(loc == null)
+        else if(service == null)
             throw new DoesNotExist();
 
-        currentRegion.removeServiceFromSorted(loc);
-        loc.addReview(new ReviewClass(numericRate, tag));
-        currentRegion.addServiceToSorted(loc);
+        currentRegion.addReview(service, new ReviewClass(numericRate, tag));
     }
 
     @Override
@@ -381,6 +379,11 @@ public class homeAwayAppClass implements HomeAwayApp{
         Service loc = this.currentRegion.getService(locationName);
         if(stu instanceof Thrifty && loc instanceof Eating) return ((Thrifty) stu).isDistracted(loc);
         else return false;
+    }
+
+    @Override
+    public boolean hasRegion() {
+        return this.currentRegion != null;
     }
 
 

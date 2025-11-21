@@ -30,6 +30,8 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
     public TwoWayDoublyIterator(DoublyListNode<E> first, DoublyListNode<E> last) {
         super(first);
         //TODO: Left as an exercise.
+        this.lastNode = last;
+        this.prevToReturn = last;
     }
 
     /**
@@ -39,7 +41,7 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      */
     public boolean hasPrevious( ) {
         //TODO: Left as an exercise.
-        return true;
+        return prevToReturn != null;
     }
 
     /**
@@ -49,7 +51,7 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      */
     public E next( ){
         //TODO: Left as an exercise.
-        return null;
+        return super.next();
     }
 
     /**
@@ -59,7 +61,11 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      */
     public E previous( ) {
         //TODO: Left as an exercise.
-        return null;
+        if(!hasPrevious())
+            throw new NoSuchElementException();
+        E previous = prevToReturn.getElement();
+        prevToReturn = prevToReturn.getPrevious();
+        return previous;
     }
 
     /**
@@ -69,6 +75,7 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      */
     public void fullForward() {
         //TODO: Left as an exercise.
+        prevToReturn = lastNode;
     }
 
     /**
@@ -76,5 +83,7 @@ class TwoWayDoublyIterator<E> extends DoublyIterator<E>
      */
     public void rewind() {
         //TODO: Left as an exercise.
+        super.rewind();
+        this.prevToReturn = this.lastNode;
     }
 }

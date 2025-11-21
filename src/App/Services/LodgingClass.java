@@ -47,7 +47,8 @@ public class LodgingClass extends ServiceAbstractClass implements Lodging {
     @Override
     public void removeStudent(Student student) {
         numOfPeople--;
-        inService.remove(inService.indexOf(student));
+        int index = inService.indexOf(student);
+        inService.remove(index);
     }
 
     @Override

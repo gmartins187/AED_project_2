@@ -105,7 +105,8 @@ public class Main {
                     in.nextLine();}
             }
         } while(!command.equals(Command.EXIT));
-        App.saveArea();
+        if(App.hasRegion())
+            App.saveArea();
         //clearDataFolder();
         in.close();
     }
@@ -403,8 +404,8 @@ public class Main {
             if(order.equals("<")){
                 TwoWayIterator<Student> newIt = (TwoWayIterator<Student>) it;
                 while(newIt.hasPrevious()){
-                    Student next = newIt.previous();
-                    System.out.println(next.getName() + ": " + next.getType());
+                    Student previous = newIt.previous();
+                    System.out.println(previous.getName() + ": " + previous.getType());
                 }
             } else{
                 while(it.hasNext()){

@@ -297,7 +297,7 @@ public class DoublyLinkedList<E> implements TwoWayList<E> {
         }else{
             DoublyListNode<E> node = this.tail;
 
-            for(int i=size(); i>position; i--)
+            for(int i = size() - 1; i > position; i--)
                 node = node.getPrevious();
 
             return node;

@@ -1,5 +1,7 @@
 package App;
 
+import App.Services.Review;
+import App.Services.ReviewClass;
 import App.Services.Service;
 import App.Students.Student;
 import dataStructures.Iterator;
@@ -171,4 +173,11 @@ public interface Region extends Serializable {
      * @return the stored value
      */
     int getSavedOrderCounter();
+
+    /**
+     * Adds review to the service
+     * @param service the service to review
+     * @param review the review
+     */
+    void addReview(Service service, Review review);
 }
