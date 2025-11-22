@@ -31,18 +31,19 @@ public class homeAwayAppClass implements HomeAwayApp{
 
 
 
-
-
     @Override
-    public void newArea(long top, long left, long bottom, long right, String name)
-            throws InvalidArea, AlreadyExists{
-        if(fileExists(name.toLowerCase())){
+    public void newArea(long top, long left, long bottom, long right, String name) {
+
+
+        if(this.currentRegion != null)
+            saveArea();
+        if(fileExists(name.toLowerCase()))
             throw new AlreadyExists();
-        }else if(invalidArea(top,left,bottom,right)){
+        else if(invalidArea(top,left,bottom,right))
             throw new InvalidArea();
-        }else {
-            currentRegion = new RegionClass(top, bottom, left, right, name);
-        }
+
+
+        currentRegion = new RegionClass(top, bottom, left, right, name);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class homeAwayAppClass implements HomeAwayApp{
 
     @Override
     public String loadArea(String regionName) throws NoCurrentArea{
-        if(currentRegion != null)
+        if(this.currentRegion != null)
             saveArea();
 
         File file = new File("data", regionName.replace(" ", ""));
@@ -172,27 +173,30 @@ public class homeAwayAppClass implements HomeAwayApp{
     }
 
     @Override
-    public void removeStudent(String name) {
+    public String removeStudent(String name) {
         Student student = this.currentRegion.getStudent(name);
 
         if(student == null)
             throw new DoesNotExist();
 
-        this.currentRegion.removeStudent(name);
-
+        return this.currentRegion.removeStudent(name);
     }
 
     @Override
     public Iterator<Student> listStudents(String from) {
+
         if(this.currentRegion == null)
             throw new NoCurrentArea();
-        if(!this.currentRegion.hasStudents()){
+        if(from.equals("all") && !this.currentRegion.hasStudents())
             throw new DoesNotExist();
-        } else if(!this.currentRegion.hasEthnicity(from)){
+        else if(!this.currentRegion.hasStudentsFrom(from))
             throw new InvalidArea();
-        } else{
-            return this.currentRegion.listStudents(from);
-        }
+        else if(!this.currentRegion.hasEthnicity(from))
+            throw new InvalidArea();
+
+
+
+        return this.currentRegion.listStudents(from);
     }
 
     @Override
@@ -217,8 +221,6 @@ public class homeAwayAppClass implements HomeAwayApp{
         student.setLocation(service);
         student.pingService(service);
     }
-
-
 
     @Override
     public void changeStudentHome(String name, String lodgingName) {
@@ -356,8 +358,6 @@ public class homeAwayAppClass implements HomeAwayApp{
 
     }
 
-
-
     @Override
     public String getAreaName() {
         return currentRegion.getName();
@@ -385,6 +385,7 @@ public class homeAwayAppClass implements HomeAwayApp{
     public boolean hasRegion() {
         return this.currentRegion != null;
     }
+
 
 
     /**

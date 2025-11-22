@@ -60,7 +60,7 @@ public interface HomeAwayApp {
      * @param name the name of the student to remove
      * @throws DoesNotExist if the student does not exist
      */
-    void removeStudent(String name);
+    String removeStudent(String name);
 
 
     /**

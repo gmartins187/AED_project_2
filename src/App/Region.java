@@ -74,7 +74,7 @@ public interface Region extends Serializable {
      * removes student from the current region
      * @param name the name of the student to remove
      */
-    void removeStudent(String name);
+    String removeStudent(String name);
 
     /**
      * @param lodgingName the name of the lodge
@@ -182,4 +182,11 @@ public interface Region extends Serializable {
      * @param review the review
      */
     void addReview(Service service, Review review);
+
+    /**
+     *
+     * @param from the place to check
+     * @return yes if the place in question has anyone from it
+     */
+    boolean hasStudentsFrom(String from);
 }

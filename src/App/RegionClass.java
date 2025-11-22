@@ -10,7 +10,7 @@ public class RegionClass implements Region {
     private int savedOrderCounter;
 
     private final long topBound;
-    private final long lowBound;
+    private final long bottomBound;
     private final long leftBound;
     private final long rightBound;
 
@@ -20,7 +20,6 @@ public class RegionClass implements Region {
     private final List<Service> services;
     //sorted by alphabetical order
     private final SortedMap<String, Student> students;
-
 
     //sortedRating TAD's is this list?
     private final List<Service> sortedRatingWith5Star;
@@ -32,18 +31,17 @@ public class RegionClass implements Region {
     private final Map<String, List<Student>> ethnicityList;
 
 
-
     /**
      * Constructor for RegionClass
      * @param topBound the top boundary of the region
-     * @param lowBound the low boundary of the region
+     * @param bottomBound the low boundary of the region
      * @param leftBound the left boundary of the region
      * @param rightBound the right boundary of the region
      * @param regionName the name of the region
      */
-    public RegionClass(long topBound, long lowBound, long leftBound, long rightBound, String regionName) {
+    public RegionClass(long topBound, long bottomBound, long leftBound, long rightBound, String regionName) {
         this.topBound = topBound;
-        this.lowBound = lowBound;
+        this.bottomBound = bottomBound;
         this.leftBound = leftBound;
         this.rightBound = rightBound;
         this.regionName = regionName;
@@ -73,7 +71,7 @@ public class RegionClass implements Region {
     @Override
     public boolean isValid(long latitude, long longitude) {
         return this.topBound >= latitude
-                && latitude >= this.lowBound
+                && latitude >= this.bottomBound
                 && this.leftBound <= longitude
                 && longitude <= this.rightBound;
     }
@@ -153,10 +151,15 @@ public class RegionClass implements Region {
     }
 
     @Override
-    public void removeStudent(String name) {
+    public String removeStudent(String name) {
         //remover da sorted list e da ethnicity list
         name = name.trim().toLowerCase();
+
+        String ret = students.get(name).getName();
         Student stu = students.get(name);
+
+        Service toRemove = stu.getLocation();
+        toRemove.removeStudent(stu);
 
         students.remove(name);
 
@@ -165,6 +168,8 @@ public class RegionClass implements Region {
         list.remove(list.indexOf(stu));
         if(list.isEmpty())
             ethnicityList.remove(stu.getEthnicity());
+
+        return ret;
     }
 
     @Override
@@ -205,7 +210,7 @@ public class RegionClass implements Region {
     }
 
     @Override
-        public String whereStudent(Student student) {
+    public String whereStudent(Student student) {
         Service location = student.getLocation();
         return String.format("%s is at %s %s (%d, %d).",
                 student.getName(), location.getName(),
@@ -223,8 +228,16 @@ public class RegionClass implements Region {
         return ret.iterator();
     }
 
-    private List<Service> mergeLists(List<Service> l1, List<Service> l2,
-                                     List<Service> l3, List<Service> l4, List<Service> l5) {
+    /**
+     * private method that merges 5 lists in 1 in this case used for the rating lists
+     * @param l1
+     * @param l2
+     * @param l3
+     * @param l4
+     * @param l5
+     * @return the merged list
+     */
+    private List<Service> mergeLists(List<Service> l1, List<Service> l2, List<Service> l3, List<Service> l4, List<Service> l5) {
         List<Service> ret = new DoublyLinkedList<>();
 
         List<List<Service>> lists = new ListInArray<>(5);
@@ -341,7 +354,7 @@ public class RegionClass implements Region {
         int MinPrice = Integer.MAX_VALUE;
         while(it.hasNext()){
             Service next = it.next();
-            if(next.getType().equals(type) && next.getPrice() < MinPrice) {
+            if(next.getType().equalsIgnoreCase(type) && next.getPrice() < MinPrice) {
                 MinPrice = next.getPrice();
             }
         }
@@ -380,7 +393,6 @@ public class RegionClass implements Region {
         }
     }
 
-
     @Override
     public void setSavedOrderCounter(int counter) {
         this.savedOrderCounter = counter;
@@ -403,5 +415,16 @@ public class RegionClass implements Region {
             removeServiceFromSorted(service, oldAvg);
             addServiceToSorted(service, newAvg);
         }
+    }
+
+    @Override
+    public boolean hasStudentsFrom(String from) {
+        if(from.equalsIgnoreCase("all")) //ignore 'all' case
+            return true;
+
+        List<Student> ret = ethnicityList.get(from.toLowerCase());
+        if(ret!=null)
+            return !ret.isEmpty();
+        else return false;
     }
 }

@@ -290,8 +290,7 @@ public class Main {
     private static void removeStudent(HomeAwayApp app, Scanner in) {
         String name = in.nextLine().trim();
         try{
-            name = app.getStudentName(name);
-            app.removeStudent(name);
+            name = app.removeStudent(name);
             System.out.println(name + HAS_LEFT);
         } catch (DoesNotExist e){
             System.out.println(name + " does not exist!");
