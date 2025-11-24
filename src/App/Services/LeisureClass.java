@@ -1,10 +1,11 @@
 package App.Services;
 
 import App.Students.Student;
-import dataStructures.TwoWayIterator;
 import dataStructures.TwoWayList;
 
 public class LeisureClass extends ServiceAbstractClass implements Leisure{
+
+    private final int priceWithDiscount;
 
     /**
      * Constructor for ServiceAbstractClass.
@@ -17,6 +18,7 @@ public class LeisureClass extends ServiceAbstractClass implements Leisure{
      */
     public LeisureClass(long latitude, long longitude, int price, int value, String name, String type) {
         super(latitude, longitude, price, name, type);
+        priceWithDiscount = price * (100 - value) / 100;
     }
 
 
@@ -47,5 +49,10 @@ public class LeisureClass extends ServiceAbstractClass implements Leisure{
     @Override
     public TwoWayList<Student> getStudents() {
         return null;
+    }
+
+    @Override
+    public int getPrice(){
+        return this.priceWithDiscount;
     }
 }

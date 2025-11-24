@@ -61,7 +61,8 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
     @Override
     public E getFirst() {
         //TODO: Left as an exercise.
-        return null;
+        if(isEmpty()) throw new NoSuchElementException();
+        return this.head.getElement();
     }
 
     /**
@@ -73,7 +74,8 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
     @Override
     public E getLast() {
         //TODO: Left as an exercise.
-        return null;
+        if(isEmpty()) throw new NoSuchElementException();
+        return this.tail.getElement();
     }
 
     /**
@@ -89,8 +91,12 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
     @Override
     public E get(int position) {
         //TODO: Left as an exercise.
-        return null;
-        }
+        if(position>currentSize)
+            throw new InvalidPositionException();
+
+        SinglyListNode<E> ret = getNode(position);
+        return ret.getElement();
+    }
 
 
     /**
@@ -103,10 +109,18 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public int indexOf(E element) {
-       
         //TODO: Left as an exercise.
-       
-        return 0;
+
+        SinglyListNode<E> next = this.head;
+
+        for(int i=0; i<currentSize; i++){
+            if(next.getElement().equals(element))
+                return i;
+
+            next = next.getNext();
+        }
+
+        return -1;
     }
 
     /**
@@ -117,7 +131,11 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
     @Override
     public void addFirst(E element) {
         //TODO: Left as an exercise.
-        
+        SinglyListNode<E> newNode = new SinglyListNode<>(element);
+
+        newNode.setNext(this.head);
+        this.head = newNode;
+        this.currentSize++;
     }
 
     /**
@@ -127,9 +145,20 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public void addLast(E element) {
-        //TODO: Left as an exercise.
-        
+        //TODO: left as an exercise
+        SinglyListNode<E> newNode = new SinglyListNode<>(element);
+
+        if (currentSize == 0) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail.setNext(newNode);
+            tail = newNode;
+        }
+
+        currentSize++;
     }
+
 
     /**
      * Inserts the specified element at the specified position in the list.
@@ -143,10 +172,37 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public void add(int position, E element) {
-        if ( position < 0 || position > currentSize )
+        //TODO: left as an exercise
+        if (position < 0 || position > currentSize)
             throw new InvalidPositionException();
-        //TODO: Left as an exercise.
-        
+
+        if (position == 0) {
+            addFirst(element);
+            return;
+        }
+
+        if (position == currentSize) {
+            addLast(element);
+            return;
+        }
+
+        SinglyListNode<E> prev = getNode(position - 1);
+        SinglyListNode<E> newNode = new SinglyListNode<>(element);
+
+        newNode.setNext(prev.getNext());
+        prev.setNext(newNode);
+
+        currentSize++;
+    }
+
+
+    private SinglyListNode<E> getNode(int position){
+        SinglyListNode<E> ret=this.head;
+        for(int i=0; i<position; i++){
+            ret = ret.getNext();
+        }
+
+        return ret;
     }
 
 
@@ -158,11 +214,20 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public E removeFirst() {
-        if ( this.isEmpty() )
+        if (isEmpty())
             throw new NoSuchElementException();
-        //TODO: Left as an exercise.
-        return null;
+        //TODO: left as an exercise
+
+        E element = head.getElement();
+        head = head.getNext();
+        currentSize--;
+
+        if (currentSize == 0)
+            tail = null;
+
+        return element;
     }
+
 
     /**
      * Removes and returns the element at the last position in the list.
@@ -171,12 +236,25 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      * @throws NoSuchElementException - if size() == 0
      */
 
+    @Override
     public E removeLast() {
-        if ( this.isEmpty() )
+        if (isEmpty())
             throw new NoSuchElementException();
-        //TODO: Left as an exercise.
-        return null;
+        //TODO: left as an exercise
+
+        if (currentSize == 1)
+            return removeFirst();
+
+        SinglyListNode<E> prev = getNode(currentSize - 2);
+        E element = tail.getElement();
+
+        prev.setNext(null);
+        tail = prev;
+        currentSize--;
+
+        return element;
     }
+
 
     /**
      * Removes and returns the element at the specified position in the list.
@@ -190,10 +268,23 @@ public class SinglyLinkedList<E> implements List<E>, Serializable {
      */
     @Override
     public E remove(int position) {
-        if ( position < 0 || position >= currentSize )
+        if (position < 0 || position > currentSize)
             throw new InvalidPositionException();
-       //TODO: Left as an exercise.
-        return null;
+        //TODO: left as an exercise.
+        if (position == 0)
+            return removeFirst();
+
+        if (position == currentSize - 1)
+            return removeLast();
+
+        SinglyListNode<E> prev = getNode(position - 1);
+        SinglyListNode<E> target = prev.getNext();
+
+        prev.setNext(target.getNext());
+        currentSize--;
+
+        return target.getElement();
     }
+
 
 }
