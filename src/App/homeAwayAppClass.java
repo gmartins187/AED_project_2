@@ -83,7 +83,7 @@ public class homeAwayAppClass implements HomeAwayApp{
 
         File file = new File("data", regionName.replace(" ", ""));
 
-        if (!file.exists()) throw new NoCurrentArea();
+        if (!file.exists()) throw new InvalidArea();
 
         try (FileInputStream input = new FileInputStream(file);
              ObjectInputStream in = new ObjectInputStream(input)) {
