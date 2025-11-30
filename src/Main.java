@@ -5,7 +5,6 @@ import App.Students.Student;
 import dataStructures.Iterator;
 import dataStructures.TwoWayIterator;
 
-import java.io.File;
 import java.util.Scanner;
 
 
@@ -575,24 +574,6 @@ public class Main {
             System.out.printf(DOES_NOT_EXIST, name);
         } catch (Untouched e) {
             System.out.printf(NO_TYPE_SERVICES, type);
-        }
-    }
-
-
-    /**
-     * Deletes all the folder info after the app is exited.
-     */
-    public static void clearDataFolder() {
-        File dataFolder = new File("data");
-
-        File[] files = dataFolder.listFiles();
-
-        if (files != null) {
-            for (File file : files) {
-                if (file.isFile()) {
-                    boolean deleted = file.delete();
-                }
-            }
         }
     }
 }

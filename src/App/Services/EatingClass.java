@@ -5,7 +5,6 @@ import dataStructures.*;
 
 public class EatingClass extends ServiceAbstractClass implements Eating{
 
-    private final List<Student> visited;
     private final TwoWayList<Student> inService;
 
     private final int capacity;
@@ -28,7 +27,6 @@ public class EatingClass extends ServiceAbstractClass implements Eating{
 
         this.capacity = capacity;
 
-        visited = new ListInArray<>(MAX_CAPACITY);
         inService = new DoublyLinkedList<>();
 
         numOfPeople = 0;
@@ -42,7 +40,6 @@ public class EatingClass extends ServiceAbstractClass implements Eating{
     @Override
     public void addStudent(Student student) {
         inService.addLast(student);
-        visited.addLast(student);
         numOfPeople++;
     }
 

@@ -7,7 +7,6 @@ public class LodgingClass extends ServiceAbstractClass implements Lodging {
 
     private final int capacity;
 
-    private final List<Student> visited;
     private final TwoWayList<Student> inService;
 
     private int numOfPeople;
@@ -26,7 +25,6 @@ public class LodgingClass extends ServiceAbstractClass implements Lodging {
 
         this.capacity = capacity;
 
-        visited = new DoublyLinkedList<>();
         inService = new DoublyLinkedList<>();
 
         numOfPeople = 0;
@@ -39,7 +37,6 @@ public class LodgingClass extends ServiceAbstractClass implements Lodging {
 
     @Override
     public void addStudent(Student student) {
-        visited.addLast(student);
         inService.addLast(student);
         numOfPeople++;
     }
