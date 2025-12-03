@@ -12,7 +12,6 @@ import java.util.Scanner;
  * Guilherme Martins  nº71003
  *
  *
- *
  * * Short resume in Function.
  *      The main method initializes an App with a Region.
  *      Whenever information needs to be consulted or requested,
