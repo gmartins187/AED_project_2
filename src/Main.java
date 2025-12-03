@@ -7,6 +7,11 @@ import dataStructures.TwoWayIterator;
 
 import java.util.Scanner;
 
+/**
+ * Andre Amante       nº70945
+ * Guilherme Martins  nº71003
+ */
+
 
 public class Main {
 
