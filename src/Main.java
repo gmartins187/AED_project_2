@@ -10,6 +10,18 @@ import java.util.Scanner;
 /**
  * Andre Amante       nº70945
  * Guilherme Martins  nº71003
+ *
+ *
+ *
+ * * Short resume in Function.
+ *      The main method initializes an App with a Region.
+ *      Whenever information needs to be consulted or requested,
+ *      main delegates the request to the App, which in turn
+ *      returns a string originating from the Region.
+ *      A typical example is obtaining the student's name:
+ *      main asks the App, the App queries the Region, and
+ *      the value—stored and accessed exclusively within
+ *      the Region—is returned up the chain to main.
  */
 
 
