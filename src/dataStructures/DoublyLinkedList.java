@@ -3,6 +3,10 @@ package dataStructures;
 import dataStructures.exceptions.InvalidPositionException;
 import dataStructures.exceptions.NoSuchElementException;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 /**
  * Implementation of Doubly Linked List
  * @author AED  Team
@@ -14,15 +18,15 @@ public class DoublyLinkedList<E> implements TwoWayList<E> {
     /**
      *  Node at the head of the list.
      */
-    private DoublyListNode<E> head;
+    private transient DoublyListNode<E> head;
     /**
      * Node at the tail of the list.
      */
-    private DoublyListNode<E> tail;
+    private transient DoublyListNode<E> tail;
     /**
      * Number of elements in the list.
      */
-    private int currentSize;
+    private transient int currentSize;
 
     /**
      * Constructor of an empty double linked list.
@@ -34,6 +38,27 @@ public class DoublyLinkedList<E> implements TwoWayList<E> {
         this.currentSize = 0;
         this.tail = null;
         this.head = null;
+    }
+
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
+        oos.writeInt(currentSize);
+        DoublyListNode<E> node = head;
+        while (node != null) {
+            oos.writeObject(node.getElement());
+            node = node.getNext();
+        }
+        oos.flush();
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        int size = ois.readInt();
+        for (int i = 0; i < size; i++) {
+            @SuppressWarnings("unchecked")
+            E element = (E) ois.readObject();
+            addLast(element);
+        }
     }
 
     /**

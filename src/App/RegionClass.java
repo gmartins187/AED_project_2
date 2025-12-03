@@ -22,11 +22,9 @@ public class RegionClass implements Region {
     private final SortedMap<String, Student> students;
 
     //sortedRating TAD's is this list?
-    private final List<Service> sortedRatingWith5Star;
-    private final List<Service> sortedRatingWith4Star;
-    private final List<Service> sortedRatingWith3Star;
-    private final List<Service> sortedRatingWith2Star;
-    private final List<Service> sortedRatingWith1Star;
+    private final List<List<Service>> sortedRatingServices;
+
+    private final Map<String, Service> serviceMap;
 
     private final Map<String, List<Student>> ethnicityList;
 
@@ -48,17 +46,17 @@ public class RegionClass implements Region {
 
         this.ethnicityList = new SepChainHashTable<>();
 
-        //MAP
+        //MAP mais uma estrutura de dados para consulta
         this.services = new DoublyLinkedList<>();
 
         //AVL/redBlack
         this.students = new AVLSortedMap<>();
 
-        this.sortedRatingWith5Star = new DoublyLinkedList<>();
-        this.sortedRatingWith4Star = new DoublyLinkedList<>();
-        this.sortedRatingWith3Star = new DoublyLinkedList<>();
-        this.sortedRatingWith2Star = new DoublyLinkedList<>();
-        this.sortedRatingWith1Star = new DoublyLinkedList<>();
+        sortedRatingServices = new ListInArray<>(5);
+        for (int i=0; i<5; i++)
+            sortedRatingServices.add(i, new DoublyLinkedList<>());
+
+        serviceMap = new SepChainHashTable<>();
     }
 
 
@@ -91,7 +89,7 @@ public class RegionClass implements Region {
     public void addService(Service service) {
         if(!hasService(service)){
             services.addLast(service);
-            sortedRatingWith4Star.addLast(service);
+            sortedRatingServices.get(3).addLast(service);
         }
     }
 
@@ -220,28 +218,24 @@ public class RegionClass implements Region {
 
     @Override
     public Iterator<Service> listServicesByReview() {
-        List<Service> ret = mergeLists(sortedRatingWith5Star,
-                sortedRatingWith4Star,
-                sortedRatingWith3Star,
-                sortedRatingWith2Star,
-                sortedRatingWith1Star);
+        List<Service> ret = mergeLists();
         return ret.iterator();
     }
 
     /**
      * private method that merges 5 lists in 1 in this case used for the rating lists
-     * @param l1
-     * @param l2
-     * @param l3
-     * @param l4
-     * @param l5
+     *
      * @return the merged list
      */
-    private List<Service> mergeLists(List<Service> l1, List<Service> l2, List<Service> l3, List<Service> l4, List<Service> l5) {
+    private List<Service> mergeLists() {
         List<Service> ret = new DoublyLinkedList<>();
 
         List<List<Service>> lists = new ListInArray<>(5);
-        lists.addLast(l1);lists.addLast(l2);lists.addLast(l3);lists.addLast(l4);lists.addLast(l5);
+        lists.addLast(sortedRatingServices.get(0));
+        lists.addLast(sortedRatingServices.get(1));
+        lists.addLast(sortedRatingServices.get(2));
+        lists.addLast(sortedRatingServices.get(3));
+        lists.addLast(sortedRatingServices.get(4));
 
         for(int i=0; i<lists.size(); i++){
             Iterator<Service> it = lists.get(i).iterator();
@@ -335,11 +329,7 @@ public class RegionClass implements Region {
     }
 
     private String findOtherMostRelevant(String type) {
-        Iterator<Service> it = mergeLists(sortedRatingWith5Star,
-                sortedRatingWith4Star,
-                sortedRatingWith3Star,
-                sortedRatingWith2Star,
-                sortedRatingWith1Star).iterator();
+        Iterator<Service> it = mergeLists().iterator();
         while(it.hasNext()){
             Service next = it.next();
             if(next.getType().equals(type)) return next.getName();
@@ -374,22 +364,22 @@ public class RegionClass implements Region {
     @Override
     public void removeServiceFromSorted(Service loc, int rate) {
         switch (rate){
-            case 1 -> sortedRatingWith1Star.remove(sortedRatingWith1Star.indexOf(loc));
-            case 2 -> sortedRatingWith2Star.remove(sortedRatingWith2Star.indexOf(loc));
-            case 3 -> sortedRatingWith3Star.remove(sortedRatingWith3Star.indexOf(loc));
-            case 4 -> sortedRatingWith4Star.remove(sortedRatingWith4Star.indexOf(loc));
-            case 5 -> sortedRatingWith5Star.remove(sortedRatingWith5Star.indexOf(loc));
+            case 1 -> sortedRatingServices.get(0).remove(sortedRatingServices.get(0).indexOf(loc));
+            case 2 -> sortedRatingServices.get(1).remove(sortedRatingServices.get(1).indexOf(loc));
+            case 3 -> sortedRatingServices.get(2).remove(sortedRatingServices.get(2).indexOf(loc));
+            case 4 -> sortedRatingServices.get(3).remove(sortedRatingServices.get(3).indexOf(loc));
+            case 5 -> sortedRatingServices.get(4).remove(sortedRatingServices.get(4).indexOf(loc));
         }
     }
 
     @Override
     public void addServiceToSorted(Service loc, int rate) {
         switch (rate){
-            case 1 -> sortedRatingWith1Star.addLast(loc);
-            case 2 -> sortedRatingWith2Star.addLast(loc);
-            case 3 -> sortedRatingWith3Star.addLast(loc);
-            case 4 -> sortedRatingWith4Star.addLast(loc);
-            case 5 -> sortedRatingWith5Star.addLast(loc);
+            case 1 -> sortedRatingServices.get(0).addLast(loc);
+            case 2 -> sortedRatingServices.get(1).addLast(loc);
+            case 3 -> sortedRatingServices.get(2).addLast(loc);
+            case 4 -> sortedRatingServices.get(3).addLast(loc);
+            case 5 -> sortedRatingServices.get(4).addLast(loc);
         }
     }
 
