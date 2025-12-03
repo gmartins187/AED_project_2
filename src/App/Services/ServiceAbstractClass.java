@@ -131,17 +131,103 @@ public abstract class ServiceAbstractClass implements Service {
      * @return true if the tag is contained in some other tag from this service
      */
     private boolean myContainsIgnoreCase(String reviewText, String tag){
-        String[] words = reviewText.split(" +");
+        return kmpIgnoreCase(reviewText, tag);
+    }
 
-        for (String word : words) {
-            if (word.equalsIgnoreCase(tag)) {
-                return true;
+    /**
+     * Case-insensitive KMP that matches WHOLE WORDS only (simulating split + equals).
+     */
+    private boolean kmpIgnoreCase(String text, String pattern) {
+        if (pattern.length() == 0) return true;
+        if (text.length() < pattern.length()) return false;
+
+        char[] txt = toLowerCaseCharArray(text);
+        char[] pat = toLowerCaseCharArray(pattern);
+
+        int[] lps = buildLPS(pat);
+
+        int i = 0, j = 0;
+        while (i < txt.length) {
+            if (txt[i] == pat[j]) {
+                i++;
+                j++;
+            }
+
+            if (j == pat.length) {
+
+                boolean startOk = false;
+                boolean endOk = false;
+
+                int matchStartIndex = i - j;
+                int matchEndIndex = i;
+
+                if (matchStartIndex == 0) {
+                    startOk = true;
+                } else if (txt[matchStartIndex - 1] == ' ') {
+                    startOk = true;
+                }
+
+                if (matchEndIndex == txt.length) {
+                    endOk = true;
+                } else if (txt[matchEndIndex] == ' ') {
+                    endOk = true;
+                }
+
+                if (startOk && endOk) {
+                    return true;
+                }
+
+                j = lps[j - 1];
+            }
+
+            else if (i < txt.length && txt[i] != pat[j]) {
+                if (j != 0)
+                    j = lps[j - 1];
+                else
+                    i++;
             }
         }
-
         return false;
     }
 
+    /**
+     * Build LPS array (from PDF).
+     */
+    private int[] buildLPS(char[] pattern) {
+        int m = pattern.length;
+        int[] lps = new int[m];
+        int len = 0;
+        int i = 1;
+
+        while (i < m) {
+            if (pattern[i] == pattern[len]) {
+                len++;
+                lps[i] = len;
+                i++;
+            } else {
+                if (len != 0) {
+                    len = lps[len - 1];
+                } else {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+        return lps;
+    }
+
+    /**
+     * Converts string to lowercase char array without using String methods.
+     */
+    private char[] toLowerCaseCharArray(String s) {
+        char[] arr = new char[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c >= 'A' && c <= 'Z') c = (char)(c + 32);
+            arr[i] = c;
+        }
+        return arr;
+    }
 
     @Override
     public long getDistance(Student student){

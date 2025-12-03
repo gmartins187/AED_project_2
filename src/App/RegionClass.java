@@ -16,14 +16,18 @@ public class RegionClass implements Region {
 
     private final String regionName;
 
-    //Insertion Order
-    private final List<Service> services;
+    private final int DEFAULT_RATE = 4;
+
     //sorted by alphabetical order
     private final SortedMap<String, Student> students;
+    //students Map
+    private final Map<String,Student> studentMap;
 
     //sortedRating TAD's is this list?
     private final List<List<Service>> sortedRatingServices;
-
+    //Insertion Order
+    private final List<Service> services;
+    //Map of services
     private final Map<String, Service> serviceMap;
 
     private final Map<String, List<Student>> ethnicityList;
@@ -46,11 +50,12 @@ public class RegionClass implements Region {
 
         this.ethnicityList = new SepChainHashTable<>();
 
-        //MAP mais uma estrutura de dados para consulta
-        this.services = new DoublyLinkedList<>();
-
         //AVL/redBlack
         this.students = new AVLSortedMap<>();
+        this.studentMap = new SepChainHashTable<>();
+
+        //MAP mais uma struct de data para consulta
+        this.services = new DoublyLinkedList<>();
 
         sortedRatingServices = new ListInArray<>(5);
         for (int i=0; i<5; i++)
@@ -76,20 +81,15 @@ public class RegionClass implements Region {
 
     @Override
     public Service getService(String name) {
-        Iterator<Service> iterator = services.iterator();
-        while(iterator.hasNext()) {
-            Service next = iterator.next();
-            if (next.getName().equalsIgnoreCase(name)) return next;
-        }
-
-        return null;
+        return this.serviceMap.get(name.toLowerCase());
     }
 
     @Override
     public void addService(Service service) {
         if(!hasService(service)){
             services.addLast(service);
-            sortedRatingServices.get(3).addLast(service);
+            sortedRatingServices.get(DEFAULT_RATE-1).addLast(service);
+            serviceMap.put(service.getName().toLowerCase(), service);
         }
     }
 
@@ -99,7 +99,7 @@ public class RegionClass implements Region {
      * @return true if the service is in the system
      */
     private boolean hasService(Service service) {
-        return services.indexOf(service)>=0;
+        return serviceMap.get(service.getName()) != null;
     }
 
     @Override
@@ -114,8 +114,12 @@ public class RegionClass implements Region {
 
     @Override
     public void addStudent(Student student) {
-        if(students.get(student.getName()) == null)
-            students.put(student.getName().toLowerCase(), student);
+        String stuName = student.getName().toLowerCase();
+
+        if(studentMap.get(stuName) == null){
+            students.put(stuName, student);
+            studentMap.put(stuName, student);
+        }
 
         //adds ethnicity
         String stuEthnicity = student.getEthnicity().trim().toLowerCase();
@@ -145,7 +149,7 @@ public class RegionClass implements Region {
 
     @Override
     public Student getStudent(String name) {
-        return students.get(name.toLowerCase());
+        return studentMap.get(name.toLowerCase());
     }
 
     @Override
@@ -160,6 +164,7 @@ public class RegionClass implements Region {
         toRemove.removeStudent(stu);
 
         students.remove(name);
+        studentMap.remove(name);
 
         List<Student> list = ethnicityList.get(stu.getEthnicity().toLowerCase());
         //remove student form ethnicity list
@@ -231,11 +236,11 @@ public class RegionClass implements Region {
         List<Service> ret = new DoublyLinkedList<>();
 
         List<List<Service>> lists = new ListInArray<>(5);
-        lists.addLast(sortedRatingServices.get(0));
-        lists.addLast(sortedRatingServices.get(1));
-        lists.addLast(sortedRatingServices.get(2));
-        lists.addLast(sortedRatingServices.get(3));
         lists.addLast(sortedRatingServices.get(4));
+        lists.addLast(sortedRatingServices.get(3));
+        lists.addLast(sortedRatingServices.get(2));
+        lists.addLast(sortedRatingServices.get(1));
+        lists.addLast(sortedRatingServices.get(0));
 
         for(int i=0; i<lists.size(); i++){
             Iterator<Service> it = lists.get(i).iterator();
