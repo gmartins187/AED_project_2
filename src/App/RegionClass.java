@@ -23,12 +23,14 @@ public class RegionClass implements Region {
     //students Map
     private final Map<String,Student> studentMap;
 
+
     //sortedRating TAD's is this list?
     private final List<List<Service>> sortedRatingServices;
     //Insertion Order
     private final List<Service> services;
     //Map of services
     private final Map<String, Service> serviceMap;
+
 
     private final Map<String, List<Student>> ethnicityList;
 
