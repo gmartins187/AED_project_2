@@ -80,6 +80,11 @@ public class Main {
     private static final String NO_SYSTEM_BOUNDS = "System bounds not defined.";
     private static final String NO_STUDENTS_IN = "No students on %s!\n";
     private static final String NO_ORDER = "This order does not exists!";
+    private static final String CREATED = " created.";
+    private static final String NO_BOUNDS = "Bounds %s does not exists.\n";
+    private static final String DOES_NOT = " does not exist!";
+    private static final String DESCENDANT = "<";
+    private static final String LIST_USERS = "%s: %s\n";
 
 
     public static void main(String[] args){commands();}
@@ -169,7 +174,7 @@ public class Main {
 
             app.newArea(top,left,bottom,right, areaName);
 
-            System.out.println(areaName + " created.");
+            System.out.println(areaName + CREATED);
         } catch (InvalidArea e){
             System.out.println(INVALID_BOUNDS);
         } catch (AlreadyExists e){
@@ -203,7 +208,7 @@ public class Main {
         try{;
             System.out.printf(AREA_LOADED, app.loadArea(areaName.toLowerCase()));
         } catch (InvalidArea e){
-            System.out.println("Bounds " + areaName + " does not exists.");
+            System.out.printf(NO_BOUNDS, areaName);
         }
     }
 
@@ -308,7 +313,7 @@ public class Main {
             name = app.removeStudent(name);
             System.out.println(name + HAS_LEFT);
         } catch (DoesNotExist e){
-            System.out.println(name + " does not exist!");
+            System.out.println(name + DOES_NOT);
         }
     }
 
@@ -415,16 +420,16 @@ public class Main {
 
             Iterator<Student> it = app.listUsersInService(order, serviceName);
 
-            if(order.equals("<")){
+            if(order.equals(DESCENDANT)){
                 TwoWayIterator<Student> newIt = (TwoWayIterator<Student>) it;
                 while(newIt.hasPrevious()){
                     Student previous = newIt.previous();
-                    System.out.println(previous.getName() + ": " + previous.getType());
+                    System.out.printf(LIST_USERS, previous.getName(), previous.getType());
                 }
             } else{
                 while(it.hasNext()){
                     Student next = it.next();
-                    System.out.println(next.getName() + ": " + next.getType());
+                    System.out.printf(LIST_USERS, next.getName(), next.getType());
                 }
             }
         } catch (InvalidOrder e){
