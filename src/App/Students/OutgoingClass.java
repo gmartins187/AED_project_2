@@ -1,11 +1,9 @@
 package App.Students;
 
-import App.Services.Leisure;
 import App.Services.Service;
 import dataStructures.DoublyLinkedList;
 import dataStructures.Iterator;
 import dataStructures.List;
-import dataStructures.ListInArray;
 
 public class OutgoingClass extends StudentAbstractClass implements Outgoing {
 

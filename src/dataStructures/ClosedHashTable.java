@@ -49,7 +49,23 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
      * @return the index of the table, where is the entry with the specified key, or null
      */
     int searchLinearProving(K key) {
-        //TODO: Left as an exercise.      
+        //TODO: Left as an exercise.
+        int i=0;
+        int tableSize = table.length;
+        int initialHash = Math.abs(key.hashCode());
+
+        while(i<tableSize){
+            int index = (initialHash + i) % tableSize;
+            Entry<K,V> entry = table[index];
+
+            if(entry==null) return NOT_FOUND;
+
+            if(entry!=REMOVED_CELL && entry.key().equals(key))
+                return index;
+
+            i++;
+        }
+
         return NOT_FOUND; 
     }
 
@@ -65,8 +81,13 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
     @Override
     public V get(K key) {
         //TODO: Left as an exercise.
-        
-        return null;
+        if(key==null) return null;
+
+        int index = searchLinearProving(key);
+
+        if(index==NOT_FOUND) return null;
+
+        return table[index].value();
     }
 
     /**
@@ -84,12 +105,51 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
         if (isFull())
             rehash();
         //TODO: Left as an exercise.
-        return null;
+
+        V oldValue = table[searchLinearProving(key)].value();
+
+        table[searchLinearProving(key)] = new Entry<>(key,value);
+
+        return oldValue;
     }
 
-     private void rehash(){
- //TODO: Left as an exercise.
-     }
+    @SuppressWarnings("unchecked")
+    private void rehash() {
+        Entry<K,V>[] oldTable = table;
+
+        int newCapacity = HashTable.nextPrime(table.length * 2);
+
+        table = (Entry<K,V>[]) new Entry[newCapacity];
+
+        currentSize = 0;
+        maxSize = (int) (newCapacity * MAX_LOAD_FACTOR);
+
+        for (int i = 0; i < oldTable.length; i++) {
+            Entry<K,V> e = oldTable[i];
+
+            if (e != null && e != REMOVED_CELL) {
+                insertLegacyEntry(e);
+            }
+        }
+    }
+
+    // Método auxiliar para inserir diretamente sem verificar duplicados (mais rápido)
+    private void insertLegacyEntry(Entry<K,V> entry) {
+        int i = 0;
+        int tableSize = table.length;
+        int initialHash = Math.abs(entry.key().hashCode());
+
+        while (true) {
+            int index = (initialHash + i) % tableSize;
+
+            if (table[index] == null) {
+                table[index] = entry;
+                currentSize++;
+                break;
+            }
+            i++;
+        }
+    }
 
    
     /**
@@ -101,11 +161,30 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
      * @return previous value associated with key,
      * or null if the dictionary does not an entry with that key
      */
+    /**
+     * If there is an entry in the dictionary whose key is the specified key,
+     * removes it from the dictionary and returns its value;
+     * otherwise, returns null.
+     */
+    @SuppressWarnings("unchecked")
     @Override
     public V remove(K key) {
-        //TODO: Left as an exercise.
-        
-        return null;
+        if(key == null)
+            return null;
+
+        int index = searchLinearProving(key);
+
+        if (index == NOT_FOUND) {
+            return null;
+        }
+
+        V oldValue = table[index].value();
+
+        table[index] = (Entry<K,V>) REMOVED_CELL;
+
+        currentSize--;
+
+        return oldValue;
     }
 
     /**
@@ -116,8 +195,7 @@ public class ClosedHashTable<K,V> extends HashTable<K,V> {
     @Override
     public Iterator<Entry<K, V>> iterator() {
          //TODO: Left as an exercise.
-        
-        return null;
+        return new ArrayIterator<>(table, currentSize);
     }
 
 }

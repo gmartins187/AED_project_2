@@ -85,6 +85,10 @@ public class Main {
     private static final String DOES_NOT = " does not exist!";
     private static final String DESCENDANT = "<";
     private static final String LIST_USERS = "%s: %s\n";
+    private static final String ALL_SERVICES = "%s: %s (%d, %d).\n";
+    private static final String LIST_STUDENTS = "%s: %s at %s.\n";
+    private static final String LIST_SERVICES = "%s: %s\n";
+    private static final String ALL_TAGS = "%s %s\n";
 
 
     public static void main(String[] args){commands();}
@@ -205,7 +209,7 @@ public class Main {
      */
     private static void loadArea(HomeAwayApp app, Scanner in) {
         String areaName = in.nextLine().trim();
-        try{;
+        try{
             System.out.printf(AREA_LOADED, app.loadArea(areaName.toLowerCase()));
         } catch (InvalidArea e){
             System.out.printf(NO_BOUNDS, areaName);
@@ -261,10 +265,8 @@ public class Main {
             Iterator<Service> it = app.listAllServices();
             while(it.hasNext()){
                 Service next = it.next();
-                System.out.println(next.getName() + ": "
-                        + next.getType() + " ("
-                        + next.getLatitude()
-                        + ", " + next.getLongitude() + ").");
+                System.out.printf(ALL_SERVICES, next.getName(),next.getType(),
+                        next.getLatitude(), next.getLongitude());
             }
         } catch (DoesNotExist e){
             System.out.println(NO_SERVICES);
@@ -330,9 +332,8 @@ public class Main {
             Iterator<Student> it = app.listStudents(from);
             while (it.hasNext()){
                 Student next = it.next();
-                System.out.println(next.getName() + ": "
-                        + next.getType() + " at "
-                        + next.getLocation().getName() + ".");
+                System.out.printf(LIST_STUDENTS, next.getName(),
+                        next.getType(),next.getLocation().getName());
             }
         } catch (DoesNotExist e){
             System.out.println(NO_STUDENTS);
@@ -516,7 +517,7 @@ public class Main {
             System.out.println(RANKED);
             while(it.hasNext()){
                 Service next = it.next();
-                System.out.println(next.getName() + ": " + next.getAverageRating());
+                System.out.printf(LIST_SERVICES, next.getName(), next.getAverageRating());
             }
         } catch (DoesNotExist e){
             System.out.println(NO_SERVICES_SYS);
@@ -568,7 +569,7 @@ public class Main {
             Iterator<Service> it = app.getServicesWithTag(tag);
             while(it.hasNext()){
                 Service next = it.next();
-                System.out.println(next.getType().toLowerCase() + " " +next.getName());
+                System.out.printf(ALL_TAGS, next.getType().toLowerCase(), next.getName());
             }
         } catch (Untouched e) {
             System.out.println(NO_TAG);

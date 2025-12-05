@@ -365,6 +365,10 @@ public class RegionClass implements Region {
             }
         }
 
+        //should not happen (null pointer case)
+        if(ret == null)
+            return null;
+
         return ret.getName();
     }
 

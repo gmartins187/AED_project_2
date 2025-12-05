@@ -55,7 +55,8 @@ public class homeAwayAppClass implements HomeAwayApp{
             try {
                 File dataFolder = new File("data");
 
-                if (!dataFolder.exists()) dataFolder.mkdir();
+                if (!dataFolder.exists())
+                    dataFolder.mkdir();
 
                 currentRegion.setSavedOrderCounter(ServiceAbstractClass.orderOfInsertion);
 

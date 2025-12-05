@@ -9,7 +9,6 @@ public class EatingClass extends ServiceAbstractClass implements Eating{
 
     private final int capacity;
 
-    private final int MAX_CAPACITY = 1000;
     private int numOfPeople;
 
     /**
